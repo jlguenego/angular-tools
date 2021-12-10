@@ -5,19 +5,11 @@
   </p>
 </div>
 
-# Install
-
-Inside an angular app.
-
 ```
 cd <angular-app>
 npm i @jlguenego/angular-tools
 ```
 
-# Use
-
-- [Install](#install)
-- [Use](#use)
 - [JlgWidgetsModule](#jlgwidgetsmodule)
   - [directive autofocus](#directive-autofocus)
 - [Validators](#validators)
