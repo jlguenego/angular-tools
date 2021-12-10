@@ -10,3 +10,4 @@ export * from './lib/jlg-widgets/autofocus.directive';
 export * from './lib/interceptors/credentials.interceptor';
 export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate-async-validator.service';
+export * from './lib/services/color-scheme.service';
