@@ -1,27 +1,113 @@
-# AngularTools
+<div align="center" style="text-align: center; color: green; font-weight: bold">
+    <img width="200" height="200" src="doc/img/logo.svg">
+  <h1>@jlguenego/angular-tools</h1>
+  <p>
+    Misc tools for angular apps.
+  </p>
+</div>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.4.
+# Install
 
-## Development server
+Inside an angular app.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+cd <angular-app>
+npm i @jlguenego/angular-tools
+```
 
-## Code scaffolding
+# Use
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- [Install](#install)
+- [Use](#use)
+- [JlgWidgetsModule](#jlgwidgetsmodule)
+  - [directive autofocus](#directive-autofocus)
+- [Validators](#validators)
+  - [JlgValidators class](#jlgvalidators-class)
+    - [integer](#integer)
+  - [DuplicateAsyncValidatorService](#duplicateasyncvalidatorservice)
+- [Interceptors](#interceptors)
+  - [Credentials](#credentials)
+- [Authors](#authors)
 
-## Build
+# JlgWidgetsModule
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## directive autofocus
 
-## Running unit tests
+Like the HTML autofocus attribute, but refresh when the component starts.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Just set the focus,
 
-## Running end-to-end tests
+```html
+<input jlgAutofocus />
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+or set the focus and select all the input text.
 
-## Further help
+```html
+<input jlgAutofocus="select" />
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Validators
+
+The Angular out of the box validators are great but we need more.
+
+## JlgValidators class
+
+### integer
+
+This validator checks if the input is an integer.
+
+```ts
+new FormControl(1, [Validators.required, JlgValidators.integer]);
+```
+
+## DuplicateAsyncValidatorService
+
+Do a http request to get a JSON array response. If the response is not empty then the field is invalid. The error object is:
+
+```js
+{
+  duplicate: {
+    value: control.value;
+  }
+}
+```
+
+Example:
+
+```ts
+new FormControl('', {
+      validators: [
+        Validators.required,
+        Validators.maxLength(10),
+        Validators.minLength(3),
+      ],
+      asyncValidators: [
+        this.duplicateAsyncValidatorService.validate(
+          (val: string) => '/api/articles?filter[name]=' + val
+        ),
+      ],
+    }),
+```
+
+# Interceptors
+
+## Credentials
+
+Set the `withCredentials: true` to all HTTP requests.
+
+In `app.module.ts` set the providers as follows:
+
+```ts
+providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CredentialsInterceptor,
+      multi: true,
+    },
+  ],
+```
+
+# Authors
+
+Jean-Louis GUENEGO <jlguenego@gmail.com>
