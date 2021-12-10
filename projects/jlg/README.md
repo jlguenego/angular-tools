@@ -1,5 +1,4 @@
 <div align="center" style="text-align: center; color: green; font-weight: bold">
-    <img width="200" height="200" src="doc/img/logo.svg">
   <h1>@jlguenego/angular-tools</h1>
   <p>
     Misc tools for angular apps.
