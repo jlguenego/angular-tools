@@ -1,24 +1,110 @@
-# Jlg
+<h1 style="text-align: center; color: green; font-weight: bold" >
+@jlguenego/angular-tools
+</h1>
+<p style="text-align: center; color: green; font-weight: bold">Misc tools for angular apps.</p>
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.0.
+# Install
 
-## Code scaffolding
+Inside an angular app.
 
-Run `ng generate component component-name --project jlg` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project jlg`.
-> Note: Don't forget to add `--project jlg` or else it will be added to the default project in your `angular.json` file. 
+```
+cd <angular-app>
+npm i @jlguenego/angular-tools
+```
 
-## Build
+# Use
 
-Run `ng build jlg` to build the project. The build artifacts will be stored in the `dist/` directory.
+- [Install](#install)
+- [Use](#use)
+- [JlgWidgetsModule](#jlgwidgetsmodule)
+  - [directive autofocus](#directive-autofocus)
+- [Validators](#validators)
+  - [JlgValidators class](#jlgvalidators-class)
+    - [integer](#integer)
+  - [DuplicateAsyncValidatorService](#duplicateasyncvalidatorservice)
+- [Interceptors](#interceptors)
+  - [Credentials](#credentials)
+- [Authors](#authors)
 
-## Publishing
+# JlgWidgetsModule
 
-After building your library with `ng build jlg`, go to the dist folder `cd dist/jlg` and run `npm publish`.
+## directive autofocus
 
-## Running unit tests
+Like the HTML autofocus attribute, but refresh when the component starts.
 
-Run `ng test jlg` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Just set the focus,
 
-## Further help
+```html
+<input jlgAutofocus />
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+or set the focus and select all the input text.
+
+```html
+<input jlgAutofocus="select" />
+```
+
+# Validators
+
+The Angular out of the box validators are great but we need more.
+
+## JlgValidators class
+
+### integer
+
+This validator checks if the input is an integer.
+
+```ts
+new FormControl(1, [Validators.required, JlgValidators.integer]);
+```
+
+## DuplicateAsyncValidatorService
+
+Do a http request to get a JSON array response. If the response is not empty then the field is invalid. The error object is:
+
+```js
+{
+  duplicate: {
+    value: control.value;
+  }
+}
+```
+
+Example:
+
+```ts
+new FormControl('', {
+      validators: [
+        Validators.required,
+        Validators.maxLength(10),
+        Validators.minLength(3),
+      ],
+      asyncValidators: [
+        this.duplicateAsyncValidatorService.validate(
+          (val: string) => '/api/articles?filter[name]=' + val
+        ),
+      ],
+    }),
+```
+
+# Interceptors
+
+## Credentials
+
+Set the `withCredentials: true` to all HTTP requests.
+
+In `app.module.ts` set the providers as follows:
+
+```ts
+providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CredentialsInterceptor,
+      multi: true,
+    },
+  ],
+```
+
+# Authors
+
+Jean-Louis GUENEGO <jlguenego@gmail.com>
