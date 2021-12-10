@@ -7,7 +7,7 @@
       "projectType": "library",
       "root": "projects/jlg",
       "sourceRoot": "projects/jlg/src",
-      "prefix": "lib",
+      "prefix": "jlg",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
