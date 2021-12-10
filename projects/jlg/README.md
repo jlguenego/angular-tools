@@ -18,6 +18,8 @@ npm i @jlguenego/angular-tools
   - [DuplicateAsyncValidatorService](#duplicateasyncvalidatorservice)
 - [Interceptors](#interceptors)
   - [Credentials](#credentials)
+- [Services](#services)
+  - [ColorSchemeService](#colorschemeservice)
 - [Authors](#authors)
 
 # JlgWidgetsModule
@@ -97,6 +99,21 @@ providers: [
       multi: true,
     },
   ],
+```
+
+# Services
+
+## ColorSchemeService
+
+This service tracks and control the prefered color scheme in css.
+
+- The theme adds a `dark` or `light` class to the body HTML element that is synchronized with the css prefered color scheme.
+- The theme adds in the local storage the user preferences about the `dark` or `light` wanted color scheme.
+- The service exposes a method `toggleColorScheme` to toggle the color scheme.
+
+```ts
+// to change the theme from 'dark' to 'light' and vice versa.
+toggleColorScheme();
 ```
 
 # Authors
