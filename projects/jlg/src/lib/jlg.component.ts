@@ -2,19 +2,13 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'lib-jlg',
-  template: `
-    <p>
-      jlg works!
-    </p>
-  `,
-  styles: [
-  ]
+  template: ` <p>jlg works!</p> `,
+  styles: [],
 })
 export class JlgComponent implements OnInit {
-
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
+    console.log('hello');
   }
-
 }
