@@ -20,6 +20,7 @@ npm i @jlguenego/angular-tools
   - [Credentials](#credentials)
 - [Services](#services)
   - [ColorSchemeService](#colorschemeservice)
+  - [TitleService](#titleservice)
 - [Authors](#authors)
 
 # JlgWidgetsModule
@@ -115,6 +116,45 @@ This service tracks and control the prefered color scheme in css.
 // to change the theme from 'dark' to 'light' and vice versa.
 toggleColorScheme();
 ```
+
+## TitleService
+
+This service set the `document.title` (title in the browser tab) to `<defaultTitle>: <pageTitle>`.
+The pageTitle is set to the route definition under `data.title`.
+
+Example:
+
+`app-routing.module.ts`
+
+```ts
+{
+  path: 'legal',
+  component: LegalComponent,
+  data: {
+    title: 'Mentions Légales',
+  },
+},
+```
+
+`app.component.ts`
+
+```ts
+import { Component } from "@angular/core";
+import { TitleService } from "@jlguenego/angular-tools";
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
+})
+export class AppComponent {
+  constructor(private titleService: TitleService) {
+    this.titleService.setDefaultTitle("Gestion Stock");
+  }
+}
+```
+
+will set the `document.title` to `Gestion Stock: Mentions Légales` when the router navigates to `/legal`.
 
 # Authors
 

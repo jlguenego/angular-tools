@@ -27,16 +27,16 @@ const getData = (event: RoutesRecognized): Data | null => {
   providedIn: 'root',
 })
 export class TitleService {
-  private currentStr = '';
+  private pageTitle = '';
   private defaultTitle = 'Please set a default title';
 
   constructor(private router: Router) {
     this.router.events.subscribe((event) => {
       if (event instanceof RoutesRecognized) {
         const data = getData(event);
-        this.currentStr = '';
+        this.pageTitle = '';
         if (data) {
-          this.currentStr = data['title'];
+          this.pageTitle = data['title'];
         }
         this.setDocumentTitle();
       }
@@ -49,8 +49,8 @@ export class TitleService {
   }
 
   setDocumentTitle() {
-    const title = this.currentStr
-      ? this.defaultTitle + ': ' + this.currentStr
+    const title = this.pageTitle
+      ? this.defaultTitle + ': ' + this.pageTitle
       : this.defaultTitle;
     window.document.title = title;
   }
