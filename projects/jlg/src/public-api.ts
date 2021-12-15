@@ -11,3 +11,4 @@ export * from './lib/interceptors/credentials.interceptor';
 export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate-async-validator.service';
 export * from './lib/services/color-scheme.service';
+export * from './lib/services/title.service';
