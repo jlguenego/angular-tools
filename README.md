@@ -156,6 +156,8 @@ export class AppComponent {
 
 will set the `document.title` to `Gestion Stock: Mentions Légales` when the router navigates to `/legal`.
 
+THe service take the data recursively through the children page. If the children has no data then it tries to get the parent data title.
+
 # Authors
 
 Jean-Louis GUENEGO <jlguenego@gmail.com>

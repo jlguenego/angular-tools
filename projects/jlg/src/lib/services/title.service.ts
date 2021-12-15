@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Data, Router, RoutesRecognized } from '@angular/router';
 
-const getData = (event: RoutesRecognized): Data | null => {
+const getDataTitle = (event: RoutesRecognized): string | null => {
   const dataStack = [];
   let child = event.state.root.firstChild;
   if (!child) {
@@ -16,8 +16,8 @@ const getData = (event: RoutesRecognized): Data | null => {
   }
   while (dataStack.length > 0) {
     const data = dataStack.pop();
-    if (data) {
-      return data;
+    if (data && typeof data['title'] === 'string') {
+      return data['title'];
     }
   }
   return null;
@@ -33,10 +33,10 @@ export class TitleService {
   constructor(private router: Router) {
     this.router.events.subscribe((event) => {
       if (event instanceof RoutesRecognized) {
-        const data = getData(event);
+        const title = getDataTitle(event);
         this.pageTitle = '';
-        if (data) {
-          this.pageTitle = data['title'];
+        if (title !== null) {
+          this.pageTitle = title;
         }
         this.setDocumentTitle();
       }
