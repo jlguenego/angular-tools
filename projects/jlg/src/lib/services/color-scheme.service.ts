@@ -10,9 +10,11 @@ export class ColorSchemeService {
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
 
   constructor() {
+    const browserPref = this.getBrowserPreferences();
+    this.setFavicon(browserPref);
+
     this.initUserPreferences();
     this.syncWithUserPreferences();
-    this.setFavicon(this.colorScheme$.value);
     this.colorScheme$.subscribe((newColorScheme) => {
       ['dark', 'light'].forEach((colorScheme) => {
         document.body.classList.remove(colorScheme);
@@ -48,18 +50,26 @@ export class ColorSchemeService {
     const str = localStorage.getItem('color-scheme') as ColorScheme;
     if (!['dark', 'light'].includes(str)) {
       localStorage.removeItem('color-scheme');
-      if (
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      ) {
-        this.colorScheme$.next('dark');
-      }
+      const browserPref = this.getBrowserPreferences();
+      this.colorScheme$.next(browserPref);
       return;
     }
     this.colorScheme$.next(str);
   }
 
+  private getBrowserPreferences(): ColorScheme {
+    if (!window.matchMedia) {
+      return 'light';
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    } else {
+      return 'light';
+    }
+  }
+
   setFavicon(newColorScheme: ColorScheme) {
+    console.log('setFavicon newColorScheme: ', newColorScheme);
     let link: HTMLLinkElement | null =
       document.querySelector("link[rel~='icon']");
     if (!link) {
