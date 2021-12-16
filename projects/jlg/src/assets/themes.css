@@ -1,9 +1,39 @@
 :root {
   --fg-color: #000;
   --bg-color: #fff;
+
+  --primary-hue: 120;
+
+  --primary-bg-color: hsl(var(--primary-hue), 100%, 80%);
+
+  --button-border-color: hsl(var(--primary-hue), 100%, 30%);
+  --button-bg-color: white;
+  --button-hover-bg-color: #eee;
+  --button-active-bg-color: #ddd;
+
+  --button-primary-bg-color: hsl(var(--primary-hue), 100%, 30%);
+  --button-primary-hover-bg-color: hsl(var(--primary-hue), 100%, 25%);
+  --button-primary-active-bg-color: hsl(var(--primary-hue), 100%, 20%);
+
+  --button-quiet-bg-color: hsla(0, 0%, 0%, 0);
+  --button-quiet-hover-bg-color: hsla(0, 0%, 0%, 0.05);
+  --button-quiet-active-bg-color: hsla(0, 0%, 0%, 0.1);
 }
 
 .dark {
   --fg-color: #fff;
   --bg-color: #000;
+
+  --primary-hue: 120;
+
+  --primary-bg-color: hsl(var(--primary-hue), 100%, 20%);
+
+  --button-border-color: hsl(var(--primary-hue), 100%, 20%);
+  --button-bg-color: #000;
+  --button-hover-bg-color: #222;
+  --button-active-bg-color: #444;
+
+  --button-primary-bg-color: hsl(var(--primary-hue), 100%, 20%);
+  --button-primary-hover-bg-color: hsl(var(--primary-hue), 100%, 25%);
+  --button-primary-active-bg-color: hsl(var(--primary-hue), 100%, 30%);
 }
