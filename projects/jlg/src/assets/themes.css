@@ -5,6 +5,9 @@
   --primary-hue: 120;
 
   --primary-bg-color: hsl(var(--primary-hue), 100%, 80%);
+  --footer-bg-color: hsl(var(--primary-hue), 0%, 90%);
+
+  --disabled-fg-color: hsla(0, 0%, 100%, 0.5);
 
   --button-border-color: hsl(var(--primary-hue), 100%, 30%);
   --button-bg-color: white;
@@ -18,6 +21,8 @@
   --button-quiet-bg-color: hsla(0, 0%, 0%, 0);
   --button-quiet-hover-bg-color: hsla(0, 0%, 0%, 0.05);
   --button-quiet-active-bg-color: hsla(0, 0%, 0%, 0.1);
+
+  --table-border-color: hsla(0, 0%, 0%, 0.1);
 }
 
 .dark {
@@ -27,6 +32,9 @@
   --primary-hue: 120;
 
   --primary-bg-color: hsl(var(--primary-hue), 100%, 20%);
+  --footer-bg-color: hsl(var(--primary-hue), 0%, 15%);
+
+  --disabled-fg-color: hsla(0, 0%, 100%, 0.5);
 
   --button-border-color: hsl(var(--primary-hue), 100%, 20%);
   --button-bg-color: #000;
@@ -36,4 +44,6 @@
   --button-primary-bg-color: hsl(var(--primary-hue), 100%, 20%);
   --button-primary-hover-bg-color: hsl(var(--primary-hue), 100%, 25%);
   --button-primary-active-bg-color: hsl(var(--primary-hue), 100%, 30%);
+
+  --table-border-color: hsla(0, 0%, 100%, 0.1);
 }
