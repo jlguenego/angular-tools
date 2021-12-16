@@ -20,6 +20,7 @@ npm i @jlguenego/angular-tools
   - [Credentials](#credentials)
 - [Services](#services)
   - [ColorSchemeService](#colorschemeservice)
+  - [CrudService](#crudservice)
   - [TitleService](#titleservice)
 - [Authors](#authors)
 
@@ -116,6 +117,39 @@ This service tracks and control the prefered color scheme in css.
 // to change the theme from 'dark' to 'light' and vice versa.
 toggleColorScheme();
 ```
+
+## CrudService
+
+Allow to Create, Retrieve, Update, Delete documents on a REST backend.
+
+This service is designed to work well with the [crudity library](https://github.com/jlguenego/crudity).
+It works with Observables.
+
+First declare a service like this:
+
+```ts
+import { Injectable } from "@angular/core";
+import { CrudService } from "@jlguenego/angular-tools";
+import { Article } from "../interfaces/article";
+
+@Injectable({
+  providedIn: "root",
+})
+export class ArticleService extends CrudService<Article> {
+  getEndpoint(): string {
+    return "/api/articles";
+  }
+}
+```
+
+This service exposes the following:
+
+- `documents$`: BehaviorSubject<Article[]> that reflect the list of documents
+- `retrieveAll(): Observable<void>`
+- `add(): Observable<void>`
+- `remove(set: Set<T>): Observable<void>`
+
+So components can call these at will.
 
 ## TitleService
 
