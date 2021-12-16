@@ -15,7 +15,7 @@ npm i @jlguenego/angular-tools
 - [Validators](#validators)
   - [JlgValidators class](#jlgvalidators-class)
     - [integer](#integer)
-  - [DuplicateAsyncValidatorService](#duplicateasyncvalidatorservice)
+  - [DuplicateAsyncValidator](#duplicateasyncvalidator)
 - [Interceptors](#interceptors)
   - [Credentials](#credentials)
 - [Services](#services)
@@ -56,7 +56,7 @@ This validator checks if the input is an integer.
 new FormControl(1, [Validators.required, JlgValidators.integer]);
 ```
 
-## DuplicateAsyncValidatorService
+## DuplicateAsyncValidator
 
 Do a http request to get a JSON array response. If the response is not empty then the field is invalid. The error object is:
 
@@ -72,17 +72,17 @@ Example:
 
 ```ts
 new FormControl('', {
-      validators: [
-        Validators.required,
-        Validators.maxLength(10),
-        Validators.minLength(3),
-      ],
-      asyncValidators: [
-        this.duplicateAsyncValidatorService.validate(
-          (val: string) => '/api/articles?filter[name]=' + val
-        ),
-      ],
-    }),
+  validators: [
+    Validators.required,
+    Validators.maxLength(10),
+    Validators.minLength(3),
+  ],
+  asyncValidators: [
+    this.duplicateAsyncValidator.validate(
+      (val: string) => '/api/articles?filter[name]=' + val
+    ),
+  ],
+}),
 ```
 
 # Interceptors
@@ -107,7 +107,7 @@ providers: [
 
 ## ColorSchemeService
 
-This service tracks and control the prefered color scheme in css.
+This service tracks and controls the prefered color scheme in css, and the primary hue.
 
 - The theme adds a `dark` or `light` class to the body HTML element that is synchronized with the css prefered color scheme.
 - The theme adds in the local storage the user preferences about the `dark` or `light` wanted color scheme.
