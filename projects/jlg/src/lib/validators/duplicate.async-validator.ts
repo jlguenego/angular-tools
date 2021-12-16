@@ -10,7 +10,7 @@ import { map, Observable, of, switchMap, tap, timer } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class DuplicateAsyncValidatorService {
+export class DuplicateAsyncValidator {
   constructor(private http: HttpClient) {}
   validate(makeUrl: (val: string) => string) {
     return (

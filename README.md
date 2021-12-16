@@ -107,7 +107,7 @@ providers: [
 
 ## ColorSchemeService
 
-This service tracks and control the prefered color scheme in css.
+This service tracks and controls the prefered color scheme in css, and the primary hue.
 
 - The theme adds a `dark` or `light` class to the body HTML element that is synchronized with the css prefered color scheme.
 - The theme adds in the local storage the user preferences about the `dark` or `light` wanted color scheme.

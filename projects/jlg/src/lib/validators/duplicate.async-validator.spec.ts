@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DuplicateAsyncValidatorService } from './duplicate-async-validator.service';
+import { DuplicateAsyncValidator } from './duplicate.async-validator';
 
 describe('DuplicateAsyncValidatorService', () => {
-  let service: DuplicateAsyncValidatorService;
+  let service: DuplicateAsyncValidator;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DuplicateAsyncValidatorService);
+    service = TestBed.inject(DuplicateAsyncValidator);
   });
 
   it('should be created', () => {
