@@ -112,6 +112,7 @@ This service tracks and control the prefered color scheme in css.
 - The theme adds a `dark` or `light` class to the body HTML element that is synchronized with the css prefered color scheme.
 - The theme adds in the local storage the user preferences about the `dark` or `light` wanted color scheme.
 - The service exposes a method `toggleColorScheme` to toggle the color scheme.
+- The service uses 2 favicons that must be located under `assets/favicon-dark.svg` and `assets/favicon-light.svg`.
 
 ```ts
 // to change the theme from 'dark' to 'light' and vice versa.
