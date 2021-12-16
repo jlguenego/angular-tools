@@ -3,11 +3,19 @@ import { BehaviorSubject } from 'rxjs';
 
 type ColorScheme = 'dark' | 'light';
 
+interface ColorSchemeConfig {
+  colorScheme: ColorScheme;
+  hue: number;
+}
+
+const COLOR_SHEME = 'color-scheme';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ColorSchemeService {
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
+  hue$ = new BehaviorSubject<number>(120);
 
   constructor() {
     const browserPref = this.getBrowserPreferences();
@@ -20,7 +28,20 @@ export class ColorSchemeService {
         document.body.classList.remove(colorScheme);
       });
       document.body.classList.add(newColorScheme);
-      localStorage.setItem('color-scheme', newColorScheme);
+      const config: ColorSchemeConfig = {
+        hue: this.hue$.value,
+        colorScheme: newColorScheme,
+      };
+      localStorage.setItem(COLOR_SHEME, JSON.stringify(config));
+    });
+
+    this.hue$.subscribe((newHue) => {
+      document.documentElement.style.setProperty('--primary-hue', newHue + '');
+      const config: ColorSchemeConfig = {
+        hue: newHue,
+        colorScheme: this.colorScheme$.value,
+      };
+      localStorage.setItem(COLOR_SHEME, JSON.stringify(config));
     });
   }
 
@@ -30,6 +51,10 @@ export class ColorSchemeService {
       return;
     }
     this.colorScheme$.next('light');
+  }
+
+  updateHue(newHue: number) {
+    this.hue$.next(newHue);
   }
 
   private syncWithUserPreferences() {
@@ -47,14 +72,26 @@ export class ColorSchemeService {
   }
 
   private initUserPreferences() {
-    const str = localStorage.getItem('color-scheme') as ColorScheme;
-    if (!['dark', 'light'].includes(str)) {
-      localStorage.removeItem('color-scheme');
+    try {
+      const str = localStorage.getItem(COLOR_SHEME);
+      if (!str) {
+        throw new Error();
+      }
+      const colorSchemeConfig = JSON.parse(str) as ColorSchemeConfig;
+      if (!['dark', 'light'].includes(colorSchemeConfig.colorScheme)) {
+        throw new Error();
+      }
+      if (isNaN(+colorSchemeConfig.hue)) {
+        throw new Error();
+      }
+      this.colorScheme$.next(colorSchemeConfig.colorScheme);
+      this.hue$.next(colorSchemeConfig.hue);
+    } catch (err) {
+      localStorage.removeItem(COLOR_SHEME);
       const browserPref = this.getBrowserPreferences();
       this.colorScheme$.next(browserPref);
       return;
     }
-    this.colorScheme$.next(str);
   }
 
   private getBrowserPreferences(): ColorScheme {
@@ -69,7 +106,6 @@ export class ColorSchemeService {
   }
 
   setFavicon(newColorScheme: ColorScheme) {
-    console.log('setFavicon newColorScheme: ', newColorScheme);
     let link: HTMLLinkElement | null =
       document.querySelector("link[rel~='icon']");
     if (!link) {
