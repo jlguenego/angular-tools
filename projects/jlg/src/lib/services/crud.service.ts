@@ -139,6 +139,13 @@ export abstract class CrudService<T extends Idable> {
       orderStack.push(order);
       console.log('orderStack: ', orderStack);
       await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orderStack);
+
+      // remove the documents from the localforage
+      const documents = await getDefaultItem<T[]>(this.url, []);
+      const remainingDocuments = documents.filter((d) => !ids.includes(d.id));
+      localforage.setItem(this.url, remainingDocuments);
+
+      // finishing.
       s.next(undefined);
       s.complete();
     })();
