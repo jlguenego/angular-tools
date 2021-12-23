@@ -1,11 +1,13 @@
-import { AddOrder, RemoveOrder } from './../interfaces/offline-order';
-import { Router } from '@angular/router';
+import { isOfflineError } from '../misc/offline-tools';
+import { OfflineCrud } from './../classes/offline-crud';
 import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import * as localforage from 'localforage';
 import {
   BehaviorSubject,
   catchError,
@@ -13,7 +15,6 @@ import {
   lastValueFrom,
   map,
   Observable,
-  of,
   Subject,
   switchMap,
   throwError,
@@ -21,25 +22,26 @@ import {
   timer,
 } from 'rxjs';
 import { Idable } from '../interfaces/idable';
-import * as localforage from 'localforage';
 import { OfflineOrder } from '../interfaces/offline-order';
+import { AddOrder, RemoveOrder } from './../interfaces/offline-order';
 import { OfflineService } from './offline.service';
-
-const OFFLINE_ORDERSTACK_NAME = 'offline-orderstack';
+import { getDefaultItem, OFFLINE_ORDERSTACK_NAME } from '../misc/offline-tools';
 
 @Injectable({
   providedIn: 'root',
 })
 export abstract class CrudService<T extends Idable> {
-  url: string;
+  url = this.getEndpoint();
 
   documents$ = new BehaviorSubject<T[]>([]);
+
+  offlineCrud = new OfflineCrud<T>(this.url);
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private offlineService: OfflineService
   ) {
-    this.url = this.getEndpoint();
     this.sync();
   }
 
@@ -67,7 +69,7 @@ export abstract class CrudService<T extends Idable> {
           catchError((err: unknown) => {
             console.log('err: ', err);
             if (isOfflineError(err)) {
-              return this.addOffline(document);
+              return this.offlineCrud.addOffline(document);
             }
             if (err instanceof HttpErrorResponse) {
               return throwError(() => new Error(err.error));
@@ -77,25 +79,6 @@ export abstract class CrudService<T extends Idable> {
         )
       )
     );
-  }
-
-  addOffline(document: T): Observable<void> {
-    const s = new Subject<void>();
-    (async () => {
-      // push the order to the stack
-      const orderStack = await getDefaultItem<OfflineOrder<T>[]>(
-        OFFLINE_ORDERSTACK_NAME,
-        []
-      );
-      orderStack.push({
-        type: 'add',
-        document: document,
-      } as AddOrder<T>);
-      await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orderStack);
-      s.next(undefined);
-      s.complete();
-    })();
-    return s;
   }
 
   remove(ids: string[]): Observable<void> {
@@ -113,7 +96,7 @@ export abstract class CrudService<T extends Idable> {
       catchError((err: unknown) => {
         console.log('err: ', err);
         if (isOfflineError(err)) {
-          return this.removeOffline(ids);
+          return this.offlineCrud.removeOffline(ids);
         }
         if (err instanceof HttpErrorResponse) {
           return throwError(() => new Error(err.error));
@@ -123,41 +106,12 @@ export abstract class CrudService<T extends Idable> {
     );
   }
 
-  removeOffline(ids: string[]): Observable<void> {
-    const s = new Subject<void>();
-    (async () => {
-      // push the order to the stack
-      const orderStack = await getDefaultItem<OfflineOrder<T>[]>(
-        OFFLINE_ORDERSTACK_NAME,
-        []
-      );
-      const order = {
-        type: 'remove',
-        ids: ids,
-      } as RemoveOrder;
-      console.log('order: ', order);
-      orderStack.push(order);
-      console.log('orderStack: ', orderStack);
-      await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orderStack);
-
-      // remove the documents from the localforage
-      const documents = await getDefaultItem<T[]>(this.url, []);
-      const remainingDocuments = documents.filter((d) => !ids.includes(d.id));
-      localforage.setItem(this.url, remainingDocuments);
-
-      // finishing.
-      s.next(undefined);
-      s.complete();
-    })();
-    return s;
-  }
-
   retrieveAll(): Observable<void> {
     return timer(300).pipe(
       switchMap(() => this.http.get<T[]>(this.url).pipe(timeout(5000))),
       catchError((err) => {
         if (isOfflineError(err)) {
-          return this.retrieveAllOffline();
+          return this.offlineCrud.retrieveAllOffline();
         }
         return throwError(() => err);
       }),
@@ -168,27 +122,6 @@ export abstract class CrudService<T extends Idable> {
         return undefined;
       })
     );
-  }
-
-  retrieveAllOffline(): Observable<T[]> {
-    const observable = new Subject<T[]>();
-    (async () => {
-      try {
-        const doc = await localforage.getItem<T[]>(this.url);
-        console.log('doc: ', doc);
-        if (!doc) {
-          observable.next([]);
-          observable.complete();
-          return;
-        }
-        observable.next(doc);
-        observable.complete();
-      } catch (error) {
-        console.error('error: ', error);
-        observable.error(error);
-      }
-    })();
-    return observable;
   }
 
   sync() {
@@ -207,9 +140,9 @@ export abstract class CrudService<T extends Idable> {
             const order = orders.shift() as OfflineOrder<T>;
             await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orders);
             console.log('about to play order: ', order);
-            alert('run an order');
             await this.runOrder(order);
           }
+          await lastValueFrom(this.retrieveAll());
         })();
       });
   }
@@ -221,16 +154,3 @@ export abstract class CrudService<T extends Idable> {
     }
   }
 }
-
-const isOfflineError = (err: unknown) => {
-  console.log('isOfflineError err: ', err);
-  return true;
-};
-
-const getDefaultItem = async <T>(name: string, defaultValue: T): Promise<T> => {
-  const result = await localforage.getItem<T>(name);
-  if (result === null || result === undefined) {
-    return defaultValue;
-  }
-  return result;
-};
