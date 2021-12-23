@@ -107,6 +107,8 @@ export abstract class CrudService<T extends Idable> {
   }
 
   retrieveAll(): Observable<void> {
+    const wasOffline =
+      this.offlineService.connectionStatus$.value === 'offline';
     return timer(300).pipe(
       switchMap(() => this.http.get<T[]>(this.url).pipe(timeout(5000))),
       catchError((err) => {
@@ -116,6 +118,13 @@ export abstract class CrudService<T extends Idable> {
         return throwError(() => err);
       }),
       map((documents) => {
+        if (
+          wasOffline &&
+          this.offlineService.connectionStatus$.value === 'online'
+        ) {
+          // a sync should run and redo a retrieve all after all the delayed order.
+          return undefined;
+        }
         console.log('documents: ', documents);
         localforage.setItem(this.url, documents);
         this.documents$.next(documents);
@@ -137,10 +146,11 @@ export abstract class CrudService<T extends Idable> {
           );
           console.log('orders: ', orders);
           while (orders.length > 0) {
-            const order = orders.shift() as OfflineOrder<T>;
-            await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orders);
+            const order = orders[0];
             console.log('about to play order: ', order);
             await this.runOrder(order);
+            orders.shift();
+            await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orders);
           }
           await lastValueFrom(this.retrieveAll());
         })();

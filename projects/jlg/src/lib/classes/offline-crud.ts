@@ -63,13 +63,8 @@ export class OfflineCrud<T extends Idable> {
     const observable = new Subject<T[]>();
     (async () => {
       try {
-        const doc = await localforage.getItem<T[]>(this.url);
+        const doc = await getDefaultItem<T[]>(this.url, []);
         console.log('doc: ', doc);
-        if (!doc) {
-          observable.next([]);
-          observable.complete();
-          return;
-        }
         observable.next(doc);
         observable.complete();
       } catch (error) {
