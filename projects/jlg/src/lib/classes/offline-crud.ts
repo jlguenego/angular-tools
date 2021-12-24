@@ -24,6 +24,13 @@ export class OfflineCrud<T extends Idable> {
         document: document,
       } as AddOrder<T>);
       await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orderStack);
+
+      // add the document to the localforage
+      const documents = await getDefaultItem<T[]>(this.url, []);
+      documents.push(document);
+      localforage.setItem(this.url, documents);
+
+      // finish
       s.next(undefined);
       s.complete();
     })();

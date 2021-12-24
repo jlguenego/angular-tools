@@ -162,5 +162,9 @@ export abstract class CrudService<T extends Idable> {
       await lastValueFrom(this.remove(order.ids));
       return;
     }
+    if (order.type === 'add') {
+      await lastValueFrom(this.add(order.document));
+      return;
+    }
   }
 }
