@@ -18,9 +18,11 @@ npm i @jlguenego/angular-tools
   - [DuplicateAsyncValidator](#duplicateasyncvalidator)
 - [Interceptors](#interceptors)
   - [Credentials](#credentials)
+  - [Network](#network)
 - [Services](#services)
   - [ColorSchemeService](#colorschemeservice)
   - [CrudService](#crudservice)
+  - [NetworkService](#networkservice)
   - [TitleService](#titleservice)
 - [Authors](#authors)
 
@@ -103,6 +105,24 @@ providers: [
   ],
 ```
 
+## Network
+
+The NetworkService can work correctly only if the NetworkInterceptor is
+installed. This interceptor detects if the browser can access to the
+back-end server and set the NetworkService status$ observable accordingly.
+
+The interceptor will set the network status to `online` or `offline` according the HTTP response.
+
+```ts
+providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: NetworkInterceptor,
+      multi: true,
+    },
+  ],
+```
+
 # Services
 
 ## ColorSchemeService
@@ -151,6 +171,10 @@ This service exposes the following:
 - `remove(set: Set<T>): Observable<void>`
 
 So components can call these at will.
+
+## NetworkService
+
+Give an observable reflecting the network status (`online`, `offline`).
 
 ## TitleService
 

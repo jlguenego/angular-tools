@@ -21,9 +21,7 @@ export class NetworkInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap({
         next: (response) => {
-          if (
-            [HttpEventType.Sent, HttpEventType.User].includes(response.type)
-          ) {
+          if (shouldIgnore(response)) {
             return;
           }
           this.networkService.set('online');
@@ -31,7 +29,6 @@ export class NetworkInterceptor implements HttpInterceptor {
         error: (error) => {
           if (error instanceof HttpErrorResponse) {
             if ([0, 504].includes(error.status)) {
-              console.log('response.status: ', error.status);
               this.networkService.set('offline');
               return;
             }
@@ -42,3 +39,6 @@ export class NetworkInterceptor implements HttpInterceptor {
     );
   }
 }
+
+const shouldIgnore = (response: HttpEvent<unknown>) =>
+  [HttpEventType.Sent, HttpEventType.User].includes(response.type);
