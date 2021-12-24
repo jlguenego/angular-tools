@@ -16,4 +16,12 @@ export class NetworkService {
       this.status$.next(connectionStatus);
     }
   }
+
+  isOnline(): boolean {
+    return this.status$.value === 'online';
+  }
+
+  isOffline(): boolean {
+    return this.status$.value === 'offline';
+  }
 }
