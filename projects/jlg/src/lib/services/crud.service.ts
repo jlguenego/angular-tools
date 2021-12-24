@@ -1,5 +1,3 @@
-import { isOfflineError } from '../misc/offline-tools';
-import { OfflineCrud } from './../classes/offline-crud';
 import {
   HttpClient,
   HttpErrorResponse,
@@ -15,7 +13,6 @@ import {
   lastValueFrom,
   map,
   Observable,
-  Subject,
   switchMap,
   throwError,
   timeout,
@@ -23,9 +20,13 @@ import {
 } from 'rxjs';
 import { Idable } from '../interfaces/idable';
 import { OfflineOrder } from '../interfaces/offline-order';
-import { AddOrder, RemoveOrder } from './../interfaces/offline-order';
-import { OfflineService } from './offline.service';
-import { getDefaultItem, OFFLINE_ORDERSTACK_NAME } from '../misc/offline-tools';
+import {
+  getDefaultItem,
+  isOfflineError,
+  OFFLINE_ORDERSTACK_NAME,
+} from '../misc/offline-tools';
+import { OfflineCrud } from './../classes/offline-crud';
+import { NetworkService } from './network.service';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +41,7 @@ export abstract class CrudService<T extends Idable> {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private offlineService: OfflineService
+    private offlineService: NetworkService
   ) {
     this.sync();
   }
@@ -107,8 +108,7 @@ export abstract class CrudService<T extends Idable> {
   }
 
   retrieveAll(): Observable<void> {
-    const wasOffline =
-      this.offlineService.connectionStatus$.value === 'offline';
+    const wasOffline = this.offlineService.status$.value === 'offline';
     return timer(300).pipe(
       switchMap(() => this.http.get<T[]>(this.url).pipe(timeout(5000))),
       catchError((err) => {
@@ -118,10 +118,7 @@ export abstract class CrudService<T extends Idable> {
         return throwError(() => err);
       }),
       map((documents) => {
-        if (
-          wasOffline &&
-          this.offlineService.connectionStatus$.value === 'online'
-        ) {
+        if (wasOffline && this.offlineService.status$.value === 'online') {
           // a sync should run and redo a retrieve all after all the delayed order.
           return undefined;
         }
@@ -135,7 +132,7 @@ export abstract class CrudService<T extends Idable> {
 
   sync() {
     // when online, play all the offline orders.
-    this.offlineService.connectionStatus$
+    this.offlineService.status$
       .pipe(filter((status) => status === 'online'))
       .subscribe(() => {
         (async () => {
