@@ -1,4 +1,4 @@
-import { HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as localforage from 'localforage';
 
@@ -8,16 +8,14 @@ import * as localforage from 'localforage';
 export class CacheService {
   constructor() {}
 
-  async getCache(
-    request: HttpRequest<unknown>
-  ): Promise<HttpResponse<unknown> | null> {
+  async getCache(request: HttpRequest<unknown>): Promise<unknown | null> {
+    console.log('getCache on request: ', serialize(request));
+
     if (request.method === 'GET') {
-      const r = (await localforage.getItem(
-        serialize(request)
-      )) as HttpResponse<unknown> | null;
+      const r = await localforage.getItem(serialize(request));
       return r;
     }
-    throw new Error('not implemented.');
+    return null;
   }
 
   async setCache(

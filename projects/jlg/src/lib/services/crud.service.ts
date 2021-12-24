@@ -111,19 +111,11 @@ export abstract class CrudService<T extends Idable> {
     const wasOffline = this.offlineService.status$.value === 'offline';
     return timer(300).pipe(
       switchMap(() => this.http.get<T[]>(this.url).pipe(timeout(5000))),
-      catchError((err) => {
-        if (isOfflineError(err)) {
-          return this.offlineCrud.retrieveAllOffline();
-        }
-        return throwError(() => err);
-      }),
       map((documents) => {
         if (wasOffline && this.offlineService.status$.value === 'online') {
           // a sync should run and redo a retrieve all after all the delayed order.
           return undefined;
         }
-        console.log('documents: ', documents);
-        localforage.setItem(this.url, documents);
         this.documents$.next(documents);
         return undefined;
       })

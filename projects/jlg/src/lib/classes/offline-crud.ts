@@ -65,20 +65,4 @@ export class OfflineCrud<T extends Idable> {
     })();
     return s;
   }
-
-  retrieveAllOffline(): Observable<T[]> {
-    const observable = new Subject<T[]>();
-    (async () => {
-      try {
-        const doc = await getDefaultItem<T[]>(this.url, []);
-        console.log('doc: ', doc);
-        observable.next(doc);
-        observable.complete();
-      } catch (error) {
-        console.error('error: ', error);
-        observable.error(error);
-      }
-    })();
-    return observable;
-  }
 }
