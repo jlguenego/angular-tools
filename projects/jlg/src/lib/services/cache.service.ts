@@ -28,15 +28,12 @@ export class CacheService {
   ) {}
 
   isProgressiveUrl(url: string) {
-    console.log('this.config: ', this.config);
     return blackAndWhiteFilter(url, this.config.progressiveUrl);
   }
 
   async getCache(
     request: HttpRequest<unknown>
   ): Promise<HttpResponse<unknown>> {
-    console.log('getCache on request: ', serialize(request));
-
     const documents = await getDocuments(request);
     return new HttpResponse({
       status: 200,
@@ -88,7 +85,6 @@ export class CacheService {
     request: HttpRequest<unknown>,
     response: HttpResponse<unknown>
   ) {
-    console.log('set cache start (normally we are online)');
     await localforage.setItem(serialize(request), response.body);
   }
 
@@ -112,18 +108,16 @@ export class CacheService {
   isSyncRunning = false;
 
   async sync() {
-    console.log('starting sync...');
     if (this.isSyncRunning) {
       return;
     }
     this.isSyncRunning = true;
     const orders = await getOrders();
-    console.log('orders: ', orders);
     const urls = new Set<string>();
     while (orders.length > 0) {
       const order = orders[0];
       urls.add(order.url);
-      console.log('about to play order: ', order);
+
       orders.shift();
       await setOrders(orders);
       try {

@@ -28,34 +28,38 @@ export class NetworkInterceptor implements HttpInterceptor {
           return response;
         }
         this.networkService.set('online');
-        if (request.method === 'GET') {
+        if (isMethodGet(request)) {
           await this.cacheService.setCache(request, response);
         }
 
         await this.cacheService.sync();
-        if (request.method === 'GET') {
+        if (isMethodGet(request)) {
           return await this.cacheService.getCache(request);
         }
         return response;
       }),
       catchError(async (error) => {
-        if (error instanceof HttpErrorResponse) {
-          if ([0, 504].includes(error.status)) {
-            this.networkService.set('offline');
-            // get back the cache...
-            if (request.method === 'GET') {
-              return await this.cacheService.getCache(request);
-            }
-            const response = await this.cacheService.addOrder(request);
-            if (response === null) {
-              throw error;
-            }
-            return response;
-          }
-          this.networkService.set('online');
+        if (!(error instanceof HttpErrorResponse)) {
+          throw error;
         }
-        throw error;
+        if (![0, 504].includes(error.status)) {
+          this.networkService.set('online');
+          throw error;
+        }
+
+        this.networkService.set('offline');
+        // get back the cache...
+        if (isMethodGet(request)) {
+          return await this.cacheService.getCache(request);
+        }
+        const response = await this.cacheService.addOrder(request);
+        if (response === null) {
+          throw error;
+        }
+        return response;
       })
     );
   }
 }
+
+const isMethodGet = (request: HttpRequest<unknown>) => request.method === 'GET';
