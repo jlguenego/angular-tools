@@ -20,12 +20,7 @@ import {
 } from 'rxjs';
 import { Idable } from '../interfaces/idable';
 import { OfflineOrder } from '../interfaces/offline-order';
-import {
-  getDefaultItem,
-  isOfflineError,
-  OFFLINE_ORDERSTACK_NAME,
-} from '../misc/offline-tools';
-import { OfflineCrud } from './../classes/offline-crud';
+import { getDefaultItem, OFFLINE_ORDERSTACK_NAME } from '../misc/offline-tools';
 import { NetworkService } from './network.service';
 
 @Injectable({
@@ -35,8 +30,6 @@ export abstract class CrudService<T extends Idable> {
   url = this.getEndpoint();
 
   documents$ = new BehaviorSubject<T[]>([]);
-
-  offlineCrud = new OfflineCrud<T>(this.url);
 
   constructor(
     private http: HttpClient,
@@ -69,9 +62,6 @@ export abstract class CrudService<T extends Idable> {
           timeout(5000),
           catchError((err: unknown) => {
             console.log('err: ', err);
-            if (isOfflineError(err)) {
-              return this.offlineCrud.addOffline(document);
-            }
             if (err instanceof HttpErrorResponse) {
               return throwError(() => new Error(err.error));
             }
@@ -96,9 +86,6 @@ export abstract class CrudService<T extends Idable> {
       timeout(5000),
       catchError((err: unknown) => {
         console.log('err: ', err);
-        if (isOfflineError(err)) {
-          return this.offlineCrud.removeOffline(ids);
-        }
         if (err instanceof HttpErrorResponse) {
           return throwError(() => new Error(err.error));
         }

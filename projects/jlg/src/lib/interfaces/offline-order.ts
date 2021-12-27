@@ -1,4 +1,4 @@
-export type OfflineOrder<T> = AddOrder<T> | RemoveOrder;
+export type OfflineOrder<T> = (AddOrder<T> | RemoveOrder) & { url: string };
 
 export interface AddOrder<T> {
   type: 'add';
