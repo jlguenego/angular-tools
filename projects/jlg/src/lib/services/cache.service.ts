@@ -110,6 +110,23 @@ export class CacheService {
   }
 
   async runOrder(order: OfflineOrder): Promise<void> {
+    if (order.type === 'formdata') {
+      // build the formdata
+      const formdata = new FormData();
+      for (const [key, value] of Object.entries(
+        order.body as { [key: string]: string }
+      )) {
+        const file = await localforage.getItem(value);
+        if (!(file instanceof File)) {
+          throw new Error('cannot retrieve a file from localforage');
+        }
+        formdata.append(key, file);
+      }
+
+      // send the post request
+      await lastValueFrom(this.http.post(order.url, formdata));
+      return;
+    }
     if (order.method === 'DELETE') {
       const options = {
         headers: new HttpHeaders({
@@ -129,15 +146,21 @@ export class CacheService {
   isSyncRunning = false;
 
   async sync() {
+    console.log('sync requested.');
     if (this.isSyncRunning) {
+      console.log('sync already running.');
       return;
     }
     this.isSyncRunning = true;
     const orders = await getOrders();
+    console.log('orders: ', orders);
     const urls = new Set<string>();
+    console.log('orders.length: ', orders.length);
     while (orders.length > 0) {
       const order = orders[0];
-      urls.add(order.url);
+      if (order.type !== 'formdata') {
+        urls.add(order.url);
+      }
 
       orders.shift();
       await setOrders(orders);
@@ -147,9 +170,13 @@ export class CacheService {
         console.error('runOrder failed. err: ', err);
       }
     }
-    for (const url of urls) {
-      // update the cache data.
-      await lastValueFrom(this.http.get(url));
+    try {
+      for (const url of urls) {
+        // update the cache data.
+        await lastValueFrom(this.http.get(url));
+      }
+    } catch (err) {
+      console.log('err: ', err);
     }
     this.isSyncRunning = false;
   }
