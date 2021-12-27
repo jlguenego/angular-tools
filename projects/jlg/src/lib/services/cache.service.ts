@@ -1,11 +1,10 @@
-import { NetworkService } from './network.service';
 import { HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import * as localforage from 'localforage';
+import { ProgressiveRequestConfig } from '../classes/progressive-request-config';
 import { blackAndWhiteFilter } from '../misc/black-and-white-filter';
 import { addOrder, getDefaultItem } from '../misc/offline-tools';
 import { Idable } from './../interfaces/idable';
-import { ProgressiveRequestConfig } from '../classes/progressive-request-config';
 
 @Injectable({
   providedIn: 'root',

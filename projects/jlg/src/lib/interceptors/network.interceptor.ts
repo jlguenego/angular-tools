@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpEventType,
   HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Observable, tap, switchMap, of, catchError } from 'rxjs';
-import { NetworkService } from '../services/network.service';
+import { Injectable } from '@angular/core';
+import { catchError, Observable, switchMap } from 'rxjs';
 import { CacheService } from '../services/cache.service';
+import { NetworkService } from '../services/network.service';
 
 @Injectable()
 export class NetworkInterceptor implements HttpInterceptor {
