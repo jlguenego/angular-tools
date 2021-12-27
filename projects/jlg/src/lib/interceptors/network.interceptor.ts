@@ -28,12 +28,12 @@ export class NetworkInterceptor implements HttpInterceptor {
           return response;
         }
         this.networkService.set('online');
-        if (isMethodGet(request)) {
+        if (isMethodGet(request) && isCachableRequest(request)) {
           await this.cacheService.setCache(request, response);
         }
 
         await this.cacheService.sync();
-        if (isMethodGet(request)) {
+        if (isMethodGet(request) && isCachableRequest(request)) {
           return await this.cacheService.getCache(request);
         }
         return response;
@@ -63,3 +63,6 @@ export class NetworkInterceptor implements HttpInterceptor {
 }
 
 const isMethodGet = (request: HttpRequest<unknown>) => request.method === 'GET';
+
+const isCachableRequest = (request: HttpRequest<unknown>) =>
+  request.url.match(/\?/) === null;

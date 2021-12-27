@@ -92,11 +92,6 @@ export class CacheService {
     request: HttpRequest<unknown>,
     response: HttpResponse<unknown>
   ) {
-    if (request.url.match(/\?/)) {
-      // do not cache url with query string.
-      console.log('do not cache ', request.url);
-      return;
-    }
     await localforage.setItem(serialize(request), response.body);
   }
 
