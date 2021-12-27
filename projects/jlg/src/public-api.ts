@@ -13,5 +13,6 @@ export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate.async-validator';
 export * from './lib/services/color-scheme.service';
 export * from './lib/services/title.service';
+export * from './lib/services/cache.service';
 export * from './lib/services/crud.service';
 export * from './lib/services/network.service';

@@ -44,10 +44,12 @@ export class CacheService {
   async addOrder(
     request: HttpRequest<unknown>
   ): Promise<HttpResponse<unknown> | null> {
+    console.log('addorder start');
     // it is a POST, PUT, PATCH, DELETE
     if (!this.isProgressiveUrl(request.url)) {
       return null;
     }
+    console.log('progressive url. about to add order');
 
     // add an order.
     await addOrder({
@@ -56,8 +58,13 @@ export class CacheService {
       body: request.body,
     });
 
+    console.log('order added');
+
     const documents = await getDocuments(request);
     if (request.method === 'POST') {
+      // detect load image blob
+      console.log('request.body: ', request.body);
+
       if (typeof request.body !== 'object') {
         return null;
       }
@@ -86,6 +93,20 @@ export class CacheService {
     response: HttpResponse<unknown>
   ) {
     await localforage.setItem(serialize(request), response.body);
+  }
+
+  async loadImage(img: HTMLImageElement, url: string) {
+    const filename = basename(url);
+    const file = await localforage.getItem(filename);
+    if (!(file instanceof File)) {
+      return;
+    }
+    const str = URL.createObjectURL(file);
+
+    img.src = str;
+    img.onload = function () {
+      URL.revokeObjectURL(str);
+    };
   }
 
   async runOrder(order: OfflineOrder): Promise<void> {
@@ -122,7 +143,9 @@ export class CacheService {
       await setOrders(orders);
       try {
         await this.runOrder(order);
-      } catch (err) {}
+      } catch (err) {
+        console.error('runOrder failed. err: ', err);
+      }
     }
     for (const url of urls) {
       // update the cache data.
@@ -147,4 +170,8 @@ const saveDocuments = async (
 ) => {
   const key = `GET ${request.url}`;
   await localforage.setItem(key, documents);
+};
+
+const basename = (path: string) => {
+  return path.split('/').reverse()[0];
 };
