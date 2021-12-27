@@ -1,10 +1,7 @@
-export type OfflineOrder<T> = (AddOrder<T> | RemoveOrder) & { url: string };
+export type HttpMethod = 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 
-export interface AddOrder<T> {
-  type: 'add';
-  document: T;
-}
-export interface RemoveOrder {
-  type: 'remove';
-  ids: string[];
+export interface OfflineOrder {
+  method: HttpMethod;
+  url: string;
+  body: unknown;
 }

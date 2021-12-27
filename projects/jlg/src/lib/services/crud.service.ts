@@ -1,3 +1,4 @@
+import { getOrders } from './../misc/offline-tools';
 import {
   HttpClient,
   HttpErrorResponse,
@@ -35,9 +36,7 @@ export abstract class CrudService<T extends Idable> {
     private http: HttpClient,
     private router: Router,
     private offlineService: NetworkService
-  ) {
-    this.sync();
-  }
+  ) {}
 
   abstract getEndpoint(): string;
 
@@ -107,40 +106,5 @@ export abstract class CrudService<T extends Idable> {
         return undefined;
       })
     );
-  }
-
-  sync() {
-    // when online, play all the offline orders.
-    this.offlineService.status$
-      .pipe(filter((status) => status === 'online'))
-      .subscribe(() => {
-        (async () => {
-          console.log('status is back online');
-          const orders = await getDefaultItem<OfflineOrder<T>[]>(
-            OFFLINE_ORDERSTACK_NAME,
-            []
-          );
-          console.log('orders: ', orders);
-          while (orders.length > 0) {
-            const order = orders[0];
-            console.log('about to play order: ', order);
-            await this.runOrder(order);
-            orders.shift();
-            await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orders);
-          }
-          await lastValueFrom(this.retrieveAll());
-        })();
-      });
-  }
-
-  async runOrder(order: OfflineOrder<T>): Promise<void> {
-    if (order.type === 'remove') {
-      await lastValueFrom(this.remove(order.ids));
-      return;
-    }
-    if (order.type === 'add') {
-      await lastValueFrom(this.add(order.document));
-      return;
-    }
   }
 }

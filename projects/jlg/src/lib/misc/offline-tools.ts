@@ -14,11 +14,19 @@ export const getDefaultItem = async <T>(
   return result;
 };
 
-export const addOrder = async <T>(order: OfflineOrder<T>) => {
-  const orderStack = await getDefaultItem<OfflineOrder<T>[]>(
+export const addOrder = async (order: OfflineOrder) => {
+  const orderStack = await getDefaultItem<OfflineOrder[]>(
     OFFLINE_ORDERSTACK_NAME,
     []
   );
   orderStack.push(order);
   await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orderStack);
+};
+
+export const getOrders = async (): Promise<OfflineOrder[]> => {
+  return await getDefaultItem<OfflineOrder[]>(OFFLINE_ORDERSTACK_NAME, []);
+};
+
+export const setOrders = async (orders: OfflineOrder[]) => {
+  await localforage.setItem(OFFLINE_ORDERSTACK_NAME, orders);
 };
