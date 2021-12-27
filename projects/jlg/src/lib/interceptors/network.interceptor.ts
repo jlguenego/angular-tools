@@ -34,10 +34,7 @@ export class NetworkInterceptor implements HttpInterceptor {
 
         await this.cacheService.sync();
         if (request.method === 'GET') {
-          const resp = await this.cacheService.getCache(request);
-          if (resp !== null) {
-            return resp;
-          }
+          return await this.cacheService.getCache(request);
         }
         return response;
       }),
