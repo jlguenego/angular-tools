@@ -27,12 +27,13 @@ export class NetworkInterceptor implements HttpInterceptor {
         if (!(response instanceof HttpResponse)) {
           return response;
         }
-        const wasOffline = this.networkService.isOffline();
         this.networkService.set('online');
-        await this.cacheService.setCache(request, response);
+        if (request.method === 'GET') {
+          await this.cacheService.setCache(request, response);
+        }
 
-        if (wasOffline) {
-          await this.cacheService.sync();
+        await this.cacheService.sync();
+        if (request.method === 'GET') {
           const resp = await this.cacheService.getCache(request);
           if (resp !== null) {
             return resp;
@@ -45,7 +46,10 @@ export class NetworkInterceptor implements HttpInterceptor {
           if ([0, 504].includes(error.status)) {
             this.networkService.set('offline');
             // get back the cache...
-            const response = await this.cacheService.getCache(request);
+            if (request.method === 'GET') {
+              return await this.cacheService.getCache(request);
+            }
+            const response = await this.cacheService.addOrder(request);
             if (response === null) {
               throw error;
             }

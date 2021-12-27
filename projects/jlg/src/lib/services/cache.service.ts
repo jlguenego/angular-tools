@@ -1,4 +1,3 @@
-import { getOrders, setOrders } from './../misc/offline-tools';
 import {
   HttpRequest,
   HttpResponse,
@@ -10,7 +9,12 @@ import * as localforage from 'localforage';
 import { lastValueFrom } from 'rxjs';
 import { HttpMethod, OfflineOrder } from '../interfaces/offline-order';
 import { blackAndWhiteFilter } from '../misc/black-and-white-filter';
-import { addOrder, getDefaultItem } from '../misc/offline-tools';
+import {
+  addOrder,
+  getDefaultItem,
+  getOrders,
+  setOrders,
+} from '../misc/offline-tools';
 import { Idable } from './../interfaces/idable';
 import { ProgressiveRequestService } from './progressive-request.service';
 
@@ -30,17 +34,19 @@ export class CacheService {
 
   async getCache(
     request: HttpRequest<unknown>
-  ): Promise<HttpResponse<unknown> | null> {
+  ): Promise<HttpResponse<unknown>> {
     console.log('getCache on request: ', serialize(request));
 
-    if (request.method === 'GET') {
-      const documents = await getDocuments(request);
-      return new HttpResponse({
-        status: 200,
-        body: documents,
-      });
-    }
+    const documents = await getDocuments(request);
+    return new HttpResponse({
+      status: 200,
+      body: documents,
+    });
+  }
 
+  async addOrder(
+    request: HttpRequest<unknown>
+  ): Promise<HttpResponse<unknown> | null> {
     // it is a POST, PUT, PATCH, DELETE
     if (!this.isProgressiveUrl(request.url)) {
       return null;
@@ -82,12 +88,8 @@ export class CacheService {
     request: HttpRequest<unknown>,
     response: HttpResponse<unknown>
   ) {
-    console.log('set cache start (normally we are online');
-    if (request.method === 'GET') {
-      await localforage.setItem(serialize(request), response.body);
-      return;
-    }
-    return;
+    console.log('set cache start (normally we are online)');
+    await localforage.setItem(serialize(request), response.body);
   }
 
   async runOrder(order: OfflineOrder): Promise<void> {
@@ -107,8 +109,14 @@ export class CacheService {
     }
   }
 
+  isSyncRunning = false;
+
   async sync() {
-    console.log('starting sync');
+    console.log('starting sync...');
+    if (this.isSyncRunning) {
+      return;
+    }
+    this.isSyncRunning = true;
     const orders = await getOrders();
     console.log('orders: ', orders);
     const urls = new Set<string>();
@@ -116,13 +124,16 @@ export class CacheService {
       const order = orders[0];
       urls.add(order.url);
       console.log('about to play order: ', order);
-      await this.runOrder(order);
       orders.shift();
       await setOrders(orders);
+      try {
+        await this.runOrder(order);
+      } catch (err) {}
     }
     for (const url of urls) {
       this.http.get(url);
     }
+    this.isSyncRunning = false;
   }
 }
 

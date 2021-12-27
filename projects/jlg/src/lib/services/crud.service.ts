@@ -1,4 +1,3 @@
-import { getOrders } from './../misc/offline-tools';
 import {
   HttpClient,
   HttpErrorResponse,
@@ -6,12 +5,9 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import * as localforage from 'localforage';
 import {
   BehaviorSubject,
   catchError,
-  filter,
-  lastValueFrom,
   map,
   Observable,
   switchMap,
@@ -20,8 +16,6 @@ import {
   timer,
 } from 'rxjs';
 import { Idable } from '../interfaces/idable';
-import { OfflineOrder } from '../interfaces/offline-order';
-import { getDefaultItem, OFFLINE_ORDERSTACK_NAME } from '../misc/offline-tools';
 import { NetworkService } from './network.service';
 
 @Injectable({
@@ -94,14 +88,9 @@ export abstract class CrudService<T extends Idable> {
   }
 
   retrieveAll(): Observable<void> {
-    const wasOffline = this.offlineService.status$.value === 'offline';
     return timer(300).pipe(
       switchMap(() => this.http.get<T[]>(this.url).pipe(timeout(5000))),
       map((documents) => {
-        if (wasOffline && this.offlineService.status$.value === 'online') {
-          // a sync should run and redo a retrieve all after all the delayed order.
-          return undefined;
-        }
         this.documents$.next(documents);
         return undefined;
       })
