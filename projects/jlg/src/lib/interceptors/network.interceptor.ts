@@ -37,7 +37,6 @@ export class NetworkInterceptor implements HttpInterceptor {
           if ([0, 504].includes(error.status)) {
             this.networkService.set('offline');
             // get back the cache...
-
             const body = await this.cacheService.getCache(request);
             if (body === null) {
               throw error;

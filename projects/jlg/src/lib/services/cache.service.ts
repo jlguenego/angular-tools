@@ -1,14 +1,24 @@
+import { NetworkService } from './network.service';
 import { HttpRequest, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import * as localforage from 'localforage';
+import { blackAndWhiteFilter } from '../misc/black-and-white-filter';
 import { addOrder, getDefaultItem } from '../misc/offline-tools';
 import { Idable } from './../interfaces/idable';
+import { ProgressiveRequestConfig } from '../classes/progressive-request-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
-  constructor() {}
+  constructor(
+    @Optional()
+    private config: ProgressiveRequestConfig = new ProgressiveRequestConfig()
+  ) {}
+
+  isProgressiveUrl(url: string) {
+    return blackAndWhiteFilter(url, this.config.progressiveUrl);
+  }
 
   async getCache(request: HttpRequest<unknown>): Promise<unknown | null> {
     console.log('getCache on request: ', serialize(request));
@@ -17,18 +27,12 @@ export class CacheService {
       const r = await localforage.getItem(serialize(request));
       return r;
     }
-    return null;
-  }
 
-  async setCache(
-    request: HttpRequest<unknown>,
-    response: HttpResponse<unknown>
-  ) {
-    if (request.method === 'GET') {
-      localforage.setItem(serialize(request), response.body);
-      return;
-    }
     if (request.method === 'POST') {
+      if (!this.isProgressiveUrl(request.url)) {
+        return;
+      }
+
       if (typeof request.body !== 'object') {
         return;
       }
@@ -57,6 +61,19 @@ export class CacheService {
       await saveDocuments(request, remainingDocuments);
       return;
     }
+    return null;
+  }
+
+  async setCache(
+    request: HttpRequest<unknown>,
+    response: HttpResponse<unknown>
+  ) {
+    console.log('set cache start (normally we are online');
+    if (request.method === 'GET') {
+      await localforage.setItem(serialize(request), response.body);
+      return;
+    }
+    return;
   }
 }
 
