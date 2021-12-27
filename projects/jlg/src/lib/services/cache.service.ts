@@ -131,7 +131,8 @@ export class CacheService {
       } catch (err) {}
     }
     for (const url of urls) {
-      this.http.get(url);
+      // update the cache data.
+      await lastValueFrom(this.http.get(url));
     }
     this.isSyncRunning = false;
   }
