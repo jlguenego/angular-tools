@@ -11,6 +11,7 @@ export * from './lib/interceptors/network.interceptor';
 export * from './lib/interfaces/idable';
 export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate.async-validator';
+export * from './lib/services/angular-tools-config.service';
 export * from './lib/services/color-scheme.service';
 export * from './lib/services/title.service';
 export * from './lib/services/cache.service';

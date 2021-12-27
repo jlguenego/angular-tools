@@ -1,3 +1,4 @@
+import { AngularToolsConfigService } from './angular-tools-config.service';
 import {
   HttpRequest,
   HttpResponse,
@@ -16,14 +17,13 @@ import {
   setOrders,
 } from '../misc/offline-tools';
 import { Idable } from './../interfaces/idable';
-import { ProgressiveRequestService } from './progressive-request.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
   constructor(
-    private config: ProgressiveRequestService,
+    private config: AngularToolsConfigService,
     private http: HttpClient
   ) {}
 
