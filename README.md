@@ -375,7 +375,7 @@ const routes: Routes = [
 # Module OfflineStorage
 
 This module allows the Angular application to run HTTP request in offline mode.
-The offline mode is detected via the NetworkInterceptor.
+The offline mode is detected via the `NetworkInterceptor`.
 
 In the `app.module.ts` declare the module with the forRoot method:
 
