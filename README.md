@@ -21,6 +21,7 @@ npm i @jlguenego/angular-tools
   - [Timeout](#timeout)
 - [Services](#services)
   - [AngularToolsConfigService](#angulartoolsconfigservice)
+  - [CacheService](#cacheservice)
   - [ColorSchemeService](#colorschemeservice)
   - [CrudService](#crudservice)
   - [NetworkService](#networkservice)
@@ -173,6 +174,22 @@ export class CustomAngularToolsConfigService extends AngularToolsConfigService {
 ```
 
 You can see all the configuration parameters inside the `AngularToolsConfigService` class.
+
+## CacheService
+
+Part of the OfflineStorage module.
+
+The CacheService gives some primitives that allows a persistant cache to be used to manage _progressive web request_.
+In this library we call **Progressive web request** an HTTP request that has the following properties:
+
+- GET method:
+  - online: the request is done with the back-end, then the response is stored in the front-end cache.
+  - offline: the response is extracted from the front-end cache.
+- POST/PUT/PATCH/DELETE methods:
+  - online: the request is done on the back-end, and normally the user does not need the response.
+  - offline: the request cannot be done on the back-end, so the request is stored in the front-end cache. The stored request is called an _offline order_. The offline order will be executed as soons as the front-end will be able to reach the back-end (online mode). The request is also functionnaly executed, but with the front-end cache.
+
+The cache service gives the way to load image that are stored in the cache into an image HTML element `<img>`. The method is `cacheService.loadImage(img: HTMLImageElement, url: string)`.
 
 ## ColorSchemeService
 

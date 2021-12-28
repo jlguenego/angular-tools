@@ -1,4 +1,4 @@
-import { AngularToolsConfigService } from './angular-tools-config.service';
+import { OfflineStorageConfigService } from './../offline-storage.module';
 import {
   HttpRequest,
   HttpResponse,
@@ -8,24 +8,22 @@ import {
 import { Injectable } from '@angular/core';
 import * as localforage from 'localforage';
 import { lastValueFrom } from 'rxjs';
-import { HttpMethod, OfflineOrder } from '../interfaces/offline-order';
-import { blackAndWhiteFilter } from '../misc/black-and-white-filter';
+import { Idable } from '../../interfaces/idable';
+import { HttpMethod, OfflineOrder } from '../../interfaces/offline-order';
+import { blackAndWhiteFilter } from '../../misc/black-and-white-filter';
 import {
   addOrder,
   getDefaultItem,
   getOrders,
   setOrders,
-} from '../misc/offline-tools';
-import { Idable } from './../interfaces/idable';
+} from '../../misc/offline-tools';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class CacheService {
   isSyncRunning = false;
 
   constructor(
-    private config: AngularToolsConfigService,
+    private config: OfflineStorageConfigService,
     private http: HttpClient
   ) {}
 

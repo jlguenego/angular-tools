@@ -16,7 +16,6 @@ import {
   timer,
 } from 'rxjs';
 import { Idable } from '../interfaces/idable';
-import { NetworkService } from './network.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +25,7 @@ export abstract class CrudService<T extends Idable> {
 
   documents$ = new BehaviorSubject<T[]>([]);
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private offlineService: NetworkService
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   abstract getEndpoint(): string;
 

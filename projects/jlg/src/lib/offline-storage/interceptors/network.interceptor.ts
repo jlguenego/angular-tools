@@ -39,6 +39,7 @@ export class NetworkInterceptor implements HttpInterceptor {
         return response;
       }),
       catchError(async (error) => {
+        console.log('network interceptor error: ', error);
         if (!(error instanceof HttpErrorResponse)) {
           throw error;
         }

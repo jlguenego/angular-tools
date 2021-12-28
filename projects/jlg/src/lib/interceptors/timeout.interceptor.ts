@@ -19,7 +19,10 @@ export class TimeoutInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       timeout(this.config.timeoutDelay),
       catchError((err) => {
-        throw new Error(this.config.timeoutMsg);
+        if (err.name === 'TimeoutError') {
+          throw new Error(this.config.timeoutMsg);
+        }
+        throw err;
       })
     );
   }
