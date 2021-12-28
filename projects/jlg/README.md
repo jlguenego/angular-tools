@@ -1,7 +1,7 @@
 <div align="center" style="text-align: center; color: green; font-weight: bold">
   <h1>@jlguenego/angular-tools</h1>
   <img src="docs/logo.svg" height="50px">
-  <p>Misc tools for angular apps.</p>
+  <p>Simple and useful tools for angular apps.</p>
 </div>
 
 ```
@@ -25,6 +25,22 @@ npm i @jlguenego/angular-tools
   - [CrudService](#crudservice)
   - [NetworkService](#networkservice)
   - [TitleService](#titleservice)
+- [Module Connect](#module-connect)
+  - [interfaces](#interfaces)
+    - [User](#user)
+  - [Services](#services-1)
+    - [Authentication](#authentication)
+    - [Authorization](#authorization)
+    - [OAuth2](#oauth2)
+  - [Guards](#guards)
+    - [Authentication](#authentication-1)
+    - [Authorization](#authorization-1)
+- [Module OfflineStorage](#module-offlinestorage)
+  - [Interceptors](#interceptors-1)
+    - [NetworkInterceptor](#networkinterceptor)
+  - [Services](#services-2)
+    - [CacheService](#cacheservice)
+    - [NetworkService](#networkservice-1)
 - [Authors](#authors)
 
 # JlgWidgetsModule
@@ -265,6 +281,140 @@ export class AppComponent {
 will set the `document.title` to `Gestion Stock: Mentions Légales` when the router navigates to `/legal`.
 
 THe service take the data recursively through the children page. If the children has no data title then it tries to get the parent data title.
+
+# Module Connect
+
+This module gives all user management tools.
+
+## interfaces
+
+### User
+
+```ts
+export interface User {
+  id: string;
+  displayName: string;
+  email: string;
+  identityProvider: string;
+}
+```
+
+## Services
+
+### Authentication
+
+The authentication service gives an behavior subject `user$` that returns `undefined` when no user is connected, and a user object when someone is connected.
+
+The service has the following methods:
+
+- `isConnected()`: It gives a way to test if someone is connected to the back-end by calling an API.
+- `disconnect()`: disconnect a user
+- `setAfterLoginRoute()`: Specify the route url to go after being logged.
+
+As you can see, you cannot connect through the authentication service. You need the `Oauth2Service` to connect.
+
+### Authorization
+
+The authorization service gives access to the authorization config for a given connected user.
+
+- `getAuthConfig()`: get the user authorization config from the back-end.
+- `canGoToPath(path: string): Observable<boolean>`: indicates if the connected user can go the specified route path.
+- `can(privilege: string): Observable<boolean>`: indicates if the connected user has the given _privilege_.
+
+A **privilege** is just a string, that the developer can configure on the
+back-end side, in the authorization config object in order to specify what the
+user can do or cannot do with the front-end. The developer can disable/enable
+button, hide/show text, etc. according a privilege.
+
+### OAuth2
+
+The OAuth2 service allows to connect a user with the OAUTH2 protocol and a given
+identity provider (like Github, Google, Facebook, Twitter, Microsoft Azure AD,
+etc.)
+
+It just gives what the front-end needs: the url config for the "Connect with ..." button/link.
+The rest is done by the back-end. The method is the following:
+
+- `getAuthorizeUrl(provider: string): string`: for a given provider (GITHUB, etc.), return the url that the connect button needs.
+- `config$` is a BehaviorSubject that show the full configuration for all
+  providers. If you need the provider list, look at this object.
+
+## Guards
+
+### Authentication
+
+This guards redirects to the `/user/login` page if the user is not authenticated.
+
+The guard uses the `AuthenticationService`.
+
+### Authorization
+
+This guards redirect to the `/403` page if the user is not authorized to go the desired route path.
+
+The guards uses the `AuthorizationService`.
+
+Example:
+
+Tips: you should always test the authentication guard before the authorization guard.
+
+```ts
+const routes: Routes = [
+  {
+    path: "",
+    component: StockComponent,
+    canActivate: [AuthenticationGuard, AuthorizationGuard],
+  },
+  {
+    path: "add",
+    component: AddComponent,
+    canActivate: [AuthenticationGuard, AuthorizationGuard],
+  },
+];
+```
+
+# Module OfflineStorage
+
+This module allows the Angular application to run HTTP request in offline mode.
+The offline mode is detected via the `NetworkInterceptor`.
+
+In the `app.module.ts` declare the module with the forRoot method:
+
+```ts
+ imports: [
+    BrowserModule,
+    AppRoutingModule,
+    // ...
+    OfflineStorageModule.forRoot({ /* config */ }),
+  ],
+```
+
+## Interceptors
+
+### NetworkInterceptor
+
+The `NetworkInterceptor` is already added to the interceptors when the module is declared.
+
+## Services
+
+### CacheService
+
+Part of the OfflineStorage module.
+
+The CacheService gives some primitives that allows a persistant cache to be used to manage _progressive web request_.
+In this library we call **Progressive web request** an HTTP request that has the following properties:
+
+- GET method:
+  - online: the request is done with the back-end, then the response is stored in the front-end cache.
+  - offline: the response is extracted from the front-end cache.
+- POST/PUT/PATCH/DELETE methods:
+  - online: the request is done on the back-end, and normally the user does not need the response.
+  - offline: the request cannot be done on the back-end, so the request is stored in the front-end cache. The stored request is called an _offline order_. The offline order will be executed as soons as the front-end will be able to reach the back-end (online mode). The request is also functionnaly executed, but with the front-end cache.
+
+The cache service gives the way to load image that are stored in the cache into an image HTML element `<img>`. The method is `cacheService.loadImage(img: HTMLImageElement, url: string)`.
+
+### NetworkService
+
+The network service exposes an observable that reflects the network status (online, or offline) in real time.
 
 # Authors
 
