@@ -9,7 +9,7 @@ import {
   of,
   tap,
 } from 'rxjs';
-import { User } from '../interfaces/user';
+import { User } from '../../interfaces/user';
 
 @Injectable({
   providedIn: 'root',

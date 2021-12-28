@@ -7,7 +7,7 @@ import {
   BlackAndWhiteList,
   Specifier,
   SpecifierObject,
-} from '../interfaces/authorization-config';
+} from '../../interfaces/authorization-config';
 import { AuthenticationService } from './authentication.service';
 
 function whiteListFilter(value: string, whiteList: Specifier[] | undefined) {

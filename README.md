@@ -1,7 +1,7 @@
 <div align="center" style="text-align: center; color: green; font-weight: bold">
   <h1>@jlguenego/angular-tools</h1>
   <img src="docs/logo.svg" height="50px">
-  <p>Misc tools for angular apps.</p>
+  <p>Simple and useful tools for angular apps.</p>
 </div>
 
 ```
@@ -25,6 +25,7 @@ npm i @jlguenego/angular-tools
   - [CrudService](#crudservice)
   - [NetworkService](#networkservice)
   - [TitleService](#titleservice)
+- [Module Connect](#module-connect)
 - [Module OfflineStorage](#module-offlinestorage)
   - [Interceptors](#interceptors-1)
     - [NetworkInterceptor](#networkinterceptor)
@@ -271,6 +272,10 @@ export class AppComponent {
 will set the `document.title` to `Gestion Stock: Mentions Légales` when the router navigates to `/legal`.
 
 THe service take the data recursively through the children page. If the children has no data title then it tries to get the parent data title.
+
+# Module Connect
+
+This module allows to configure all services, guards related to authentication, authorization and user management.
 
 # Module OfflineStorage
 
