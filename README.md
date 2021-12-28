@@ -18,7 +18,9 @@ npm i @jlguenego/angular-tools
 - [Interceptors](#interceptors)
   - [Credentials](#credentials)
   - [Network](#network)
+  - [Timeout](#timeout)
 - [Services](#services)
+  - [AngularToolsConfigService](#angulartoolsconfigservice)
   - [ColorSchemeService](#colorschemeservice)
   - [CrudService](#crudservice)
   - [NetworkService](#networkservice)
@@ -122,7 +124,55 @@ providers: [
   ],
 ```
 
+## Timeout
+
+The TimeoutInterceptor adds a timeout on every HTTP request made with the HttpClient service.
+
+```ts
+providers: [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: TimeoutInterceptor,
+    multi: true,
+  }
+],
+```
+
 # Services
+
+## AngularToolsConfigService
+
+This service is only for configuring all the other tools of this library.
+
+To change the configuration, you should subclass this service, and change only the parameters you need.
+
+In the `app.module.ts` file:
+
+```ts
+providers: [
+  // ...
+  {
+    provide: AngularToolsConfigService,
+    useClass: CustomAngularToolsConfigService,
+  },
+],
+```
+
+You create a service called `CustomAngularToolsConfigService` like this:
+
+```ts
+import { Injectable } from "@angular/core";
+import { AngularToolsConfigService } from "@jlguenego/angular-tools";
+
+@Injectable({
+  providedIn: "root",
+})
+export class CustomAngularToolsConfigService extends AngularToolsConfigService {
+  override timeoutMsg = `Le serveur n'a pas répondu dans le délai imparti de ${this.timeoutDelay}ms.`;
+}
+```
+
+You can see all the configuration parameters inside the `AngularToolsConfigService` class.
 
 ## ColorSchemeService
 
