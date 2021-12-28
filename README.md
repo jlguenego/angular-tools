@@ -32,6 +32,9 @@ npm i @jlguenego/angular-tools
     - [Authentication](#authentication)
     - [Authorization](#authorization)
     - [OAuth2](#oauth2)
+  - [Guards](#guards)
+    - [Authentication](#authentication-1)
+    - [Authorization](#authorization-1)
 - [Module OfflineStorage](#module-offlinestorage)
   - [Interceptors](#interceptors-1)
     - [NetworkInterceptor](#networkinterceptor)
@@ -335,6 +338,39 @@ The rest is done by the back-end. The method is the following:
 - `getAuthorizeUrl(provider: string): string`: for a given provider (GITHUB, etc.), return the url that the connect button needs.
 - `config$` is a BehaviorSubject that show the full configuration for all
   providers. If you need the provider list, look at this object.
+
+## Guards
+
+### Authentication
+
+This guards redirects to the `/user/login` page if the user is not authenticated.
+
+The guard uses the `AuthenticationService`.
+
+### Authorization
+
+This guards redirect to the `/403` page if the user is not authorized to go the desired route path.
+
+The guards uses the `AuthorizationService`.
+
+Example:
+
+Tips: you should always test the authentication guard before the authorization guard.
+
+```ts
+const routes: Routes = [
+  {
+    path: "",
+    component: StockComponent,
+    canActivate: [AuthenticationGuard, AuthorizationGuard],
+  },
+  {
+    path: "add",
+    component: AddComponent,
+    canActivate: [AuthenticationGuard, AuthorizationGuard],
+  },
+];
+```
 
 # Module OfflineStorage
 
