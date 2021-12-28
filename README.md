@@ -1,8 +1,35 @@
 <div align="center" style="text-align: center; color: green; font-weight: bold">
   <h1>@jlguenego/angular-tools</h1>
-  <p>
-    Misc tools for angular apps.
-  </p>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    width="3em"
+    viewBox="0 0 350 293"
+    xml:space="preserve"
+  >
+    <style>
+      polygon {
+        stroke-width: 0.1em;
+        stroke: #000;
+      }
+    </style>
+    <g transform="matrix(2.34 0.4 -0.4 2.34 227.75 163.29)">
+      <polygon
+        style="fill: rgb(255,0,0); "
+        vector-effect="non-scaling-stroke"
+        points="-24,36.9 -38.8,-8.7 0,-36.9 38.8,-8.7 24,36.9 "
+      />
+    </g>
+    <g transform="matrix(1.85 -0.71 0.71 1.85 101.23 105.65)">
+      <polygon
+        style="fill: rgb(255,255,0); "
+        vector-effect="non-scaling-stroke"
+        points="0,-42.5 50,42.5 -50,42.5 "
+      />
+    </g>
+  </svg>
+  <p>Misc tools for angular apps.</p>
 </div>
 
 ```
