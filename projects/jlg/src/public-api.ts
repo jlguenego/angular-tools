@@ -11,7 +11,6 @@ export * from './lib/interceptors/timeout.interceptor';
 export * from './lib/interfaces/idable';
 export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate.async-validator';
-export * from './lib/services/angular-tools-config.service';
 export * from './lib/services/color-scheme.service';
 export * from './lib/services/title.service';
 export * from './lib/services/crud.service';
@@ -20,3 +19,5 @@ export * from './lib/offline-storage/offline-storage.module';
 export * from './lib/offline-storage/interceptors/network.interceptor';
 export * from './lib/offline-storage/services/cache.service';
 export * from './lib/offline-storage/services/network.service';
+
+export * from './lib/angular-tools/angular-tools.module';

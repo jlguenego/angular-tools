@@ -40,6 +40,7 @@ export class OfflineStorageModule {
       );
     }
   }
+
   static forRoot(
     config: Partial<OfflineStorageConfigService> = {}
   ): ModuleWithProviders<OfflineStorageModule> {

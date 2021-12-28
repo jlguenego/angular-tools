@@ -1,3 +1,4 @@
+import { AngularToolsConfigService } from './../angular-tools/angular-tools.module';
 import {
   HttpEvent,
   HttpHandler,
@@ -6,7 +7,6 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, timeout } from 'rxjs';
-import { AngularToolsConfigService } from './../services/angular-tools-config.service';
 
 @Injectable()
 export class TimeoutInterceptor implements HttpInterceptor {
