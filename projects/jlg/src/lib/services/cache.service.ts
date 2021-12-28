@@ -22,29 +22,16 @@ import { Idable } from './../interfaces/idable';
   providedIn: 'root',
 })
 export class CacheService {
+  isSyncRunning = false;
+
   constructor(
     private config: AngularToolsConfigService,
     private http: HttpClient
   ) {}
 
-  isProgressiveUrl(url: string) {
-    return blackAndWhiteFilter(url, this.config.progressiveUrl);
-  }
-
-  async getCache(
-    request: HttpRequest<unknown>
-  ): Promise<HttpResponse<unknown>> {
-    const documents = await getDocuments(request);
-    return new HttpResponse({
-      status: 200,
-      body: documents,
-    });
-  }
-
   async addOrder(
     request: HttpRequest<unknown>
   ): Promise<HttpResponse<unknown> | null> {
-    console.log('addorder start');
     // it is a POST, PUT, PATCH, DELETE
     if (!this.isProgressiveUrl(request.url)) {
       return null;
@@ -88,11 +75,18 @@ export class CacheService {
     return null;
   }
 
-  async setCache(
-    request: HttpRequest<unknown>,
-    response: HttpResponse<unknown>
-  ) {
-    await localforage.setItem(serialize(request), response.body);
+  async getCache(
+    request: HttpRequest<unknown>
+  ): Promise<HttpResponse<unknown>> {
+    const documents = await getDocuments(request);
+    return new HttpResponse({
+      status: 200,
+      body: documents,
+    });
+  }
+
+  isProgressiveUrl(url: string) {
+    return blackAndWhiteFilter(url, this.config.progressiveUrl);
   }
 
   async loadImage(img: HTMLImageElement, url: string) {
@@ -143,19 +137,20 @@ export class CacheService {
     }
   }
 
-  isSyncRunning = false;
+  async setCache(
+    request: HttpRequest<unknown>,
+    response: HttpResponse<unknown>
+  ) {
+    await localforage.setItem(serialize(request), response.body);
+  }
 
   async sync() {
-    console.log('sync requested.');
     if (this.isSyncRunning) {
-      console.log('sync already running.');
       return;
     }
     this.isSyncRunning = true;
     const orders = await getOrders();
-    console.log('orders: ', orders);
     const urls = new Set<string>();
-    console.log('orders.length: ', orders.length);
     while (orders.length > 0) {
       const order = orders[0];
       if (order.type !== 'formdata') {
@@ -176,7 +171,7 @@ export class CacheService {
         await lastValueFrom(this.http.get(url));
       }
     } catch (err) {
-      console.log('err: ', err);
+      console.error('err: ', err);
     }
     this.isSyncRunning = false;
   }
