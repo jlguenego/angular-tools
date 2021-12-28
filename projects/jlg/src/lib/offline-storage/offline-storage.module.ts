@@ -5,18 +5,11 @@ import {
   SkipSelf,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlackAndWhiteList } from '../interfaces/black-and-white-list';
 import { CacheService } from './services/cache.service';
 import { NetworkService } from './services/network.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NetworkInterceptor } from './interceptors/network.interceptor';
-
-export class OfflineStorageConfigService {
-  progressiveUrl: BlackAndWhiteList = {
-    whiteList: [{ type: 'regexp', path: '/api/.*' }],
-    blackList: [{ type: 'regexp', path: '/api/auth/.*' }],
-  };
-}
+import { OfflineStorageConfig } from './config/offline-storage.config';
 
 @NgModule({
   declarations: [],
@@ -42,13 +35,13 @@ export class OfflineStorageModule {
   }
 
   static forRoot(
-    config: Partial<OfflineStorageConfigService> = {}
+    config: Partial<OfflineStorageConfig> = {}
   ): ModuleWithProviders<OfflineStorageModule> {
-    const cfg = new OfflineStorageConfigService();
+    const cfg = new OfflineStorageConfig();
     Object.assign(cfg, config);
     return {
       ngModule: OfflineStorageModule,
-      providers: [{ provide: OfflineStorageConfigService, useValue: cfg }],
+      providers: [{ provide: OfflineStorageConfig, useValue: cfg }],
     };
   }
 }

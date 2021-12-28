@@ -1,4 +1,3 @@
-import { OfflineStorageConfigService } from './../offline-storage.module';
 import {
   HttpRequest,
   HttpResponse,
@@ -17,15 +16,13 @@ import {
   getOrders,
   setOrders,
 } from '../../misc/offline-tools';
+import { OfflineStorageConfig } from '../config/offline-storage.config';
 
 @Injectable()
 export class CacheService {
   isSyncRunning = false;
 
-  constructor(
-    private config: OfflineStorageConfigService,
-    private http: HttpClient
-  ) {}
+  constructor(private config: OfflineStorageConfig, private http: HttpClient) {}
 
   async addOrder(
     request: HttpRequest<unknown>
