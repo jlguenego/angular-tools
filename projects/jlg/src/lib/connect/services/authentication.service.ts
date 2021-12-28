@@ -29,7 +29,7 @@ export class AuthenticationService {
     }).pipe(catchError((err) => of(undefined)));
   }
 
-  getOfflineUser(): User | undefined {
+  private getOfflineUser(): User | undefined {
     try {
       const str = localStorage.getItem('user');
       if (!str) {
@@ -88,7 +88,7 @@ export class AuthenticationService {
     );
   }
 
-  syncOfflineUser() {
+  private syncOfflineUser() {
     this.user$.subscribe((user) => {
       localStorage.setItem('user', JSON.stringify(user));
     });

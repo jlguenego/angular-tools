@@ -26,10 +26,16 @@ npm i @jlguenego/angular-tools
   - [NetworkService](#networkservice)
   - [TitleService](#titleservice)
 - [Module Connect](#module-connect)
+  - [interfaces](#interfaces)
+    - [User](#user)
+  - [Services](#services-1)
+    - [Authentication](#authentication)
+    - [Authorization](#authorization)
+    - [OAuth2](#oauth2)
 - [Module OfflineStorage](#module-offlinestorage)
   - [Interceptors](#interceptors-1)
     - [NetworkInterceptor](#networkinterceptor)
-  - [Services](#services-1)
+  - [Services](#services-2)
     - [CacheService](#cacheservice)
     - [NetworkService](#networkservice-1)
 - [Authors](#authors)
@@ -275,7 +281,44 @@ THe service take the data recursively through the children page. If the children
 
 # Module Connect
 
-This module allows to configure all services, guards related to authentication, authorization and user management.
+This module gives all user management tools.
+
+## interfaces
+
+### User
+
+```ts
+export interface User {
+  id: string;
+  displayName: string;
+  email: string;
+  identityProvider: string;
+}
+```
+
+## Services
+
+### Authentication
+
+The authentication service gives an behavior subject `user$` that returns `undefined` when no user is connected, and a user object when someone is connected.
+
+The service has the following methods:
+
+- `isConnected()`: It gives a way to test if someone is connected to the back-end by calling an API.
+- `disconnect()`: disconnect a user
+- `setAfterLoginRoute()`: Specify the route url to go after being logged.
+
+As you can see, you cannot connect through the authentication service. You need the `Oauth2Service` to connect.
+
+### Authorization
+
+The authorization service gives access to the authorization config for a given connected user.
+
+- `getAuthConfig()`: get the user authorization config from the back-end.
+- `canGoToPath(path: string): Observable<boolean>`: indicates if the connected user can go the specified route path.
+- `can(privilege: string): Observable<boolean>`: indicates if the connected user has the given privilege.
+
+### OAuth2
 
 # Module OfflineStorage
 
