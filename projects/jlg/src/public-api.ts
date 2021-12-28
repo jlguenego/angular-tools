@@ -8,6 +8,7 @@ export * from './lib/jlg-widgets/jlg-widgets.module';
 export * from './lib/jlg-widgets/autofocus.directive';
 export * from './lib/interceptors/credentials.interceptor';
 export * from './lib/interceptors/network.interceptor';
+export * from './lib/interceptors/timeout.interceptor';
 export * from './lib/interfaces/idable';
 export * from './lib/validators/JlgValidators';
 export * from './lib/validators/duplicate.async-validator';

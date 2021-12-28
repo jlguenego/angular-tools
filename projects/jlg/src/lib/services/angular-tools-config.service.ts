@@ -10,5 +10,8 @@ export class AngularToolsConfigService {
     blackList: [{ type: 'regexp', path: '/api/auth/.*' }],
   };
 
+  timeoutDelay = 5000;
+  timeoutMsg = `Sorry, timeout. The server did not respond before ${this.timeoutDelay}ms.`;
+
   constructor() {}
 }
