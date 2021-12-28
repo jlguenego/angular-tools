@@ -4,6 +4,7 @@
 
 export * from './lib/angular-tools/angular-tools.module';
 export * from './lib/guards/authentication.guard';
+export * from './lib/guards/authorization.guard';
 export * from './lib/interceptors/credentials.interceptor';
 export * from './lib/interceptors/timeout.interceptor';
 export * from './lib/interfaces/idable';
@@ -17,6 +18,7 @@ export * from './lib/offline-storage/offline-storage.module';
 export * from './lib/offline-storage/services/cache.service';
 export * from './lib/offline-storage/services/network.service';
 export * from './lib/services/authentication.service';
+export * from './lib/services/authorization.service';
 export * from './lib/services/color-scheme.service';
 export * from './lib/services/crud.service';
 export * from './lib/services/title.service';
