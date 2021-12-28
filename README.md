@@ -21,11 +21,16 @@ npm i @jlguenego/angular-tools
   - [Timeout](#timeout)
 - [Services](#services)
   - [AngularToolsConfigService](#angulartoolsconfigservice)
-  - [CacheService](#cacheservice)
   - [ColorSchemeService](#colorschemeservice)
   - [CrudService](#crudservice)
   - [NetworkService](#networkservice)
   - [TitleService](#titleservice)
+- [Module OfflineStorage](#module-offlinestorage)
+  - [Interceptors](#interceptors-1)
+    - [NetworkInterceptor](#networkinterceptor)
+  - [Services](#services-1)
+    - [CacheService](#cacheservice)
+    - [NetworkService](#networkservice-1)
 - [Authors](#authors)
 
 # JlgWidgetsModule
@@ -175,22 +180,6 @@ export class CustomAngularToolsConfigService extends AngularToolsConfigService {
 
 You can see all the configuration parameters inside the `AngularToolsConfigService` class.
 
-## CacheService
-
-Part of the OfflineStorage module.
-
-The CacheService gives some primitives that allows a persistant cache to be used to manage _progressive web request_.
-In this library we call **Progressive web request** an HTTP request that has the following properties:
-
-- GET method:
-  - online: the request is done with the back-end, then the response is stored in the front-end cache.
-  - offline: the response is extracted from the front-end cache.
-- POST/PUT/PATCH/DELETE methods:
-  - online: the request is done on the back-end, and normally the user does not need the response.
-  - offline: the request cannot be done on the back-end, so the request is stored in the front-end cache. The stored request is called an _offline order_. The offline order will be executed as soons as the front-end will be able to reach the back-end (online mode). The request is also functionnaly executed, but with the front-end cache.
-
-The cache service gives the way to load image that are stored in the cache into an image HTML element `<img>`. The method is `cacheService.loadImage(img: HTMLImageElement, url: string)`.
-
 ## ColorSchemeService
 
 This service tracks and controls the prefered color scheme in css, and the primary hue.
@@ -282,6 +271,50 @@ export class AppComponent {
 will set the `document.title` to `Gestion Stock: Mentions Légales` when the router navigates to `/legal`.
 
 THe service take the data recursively through the children page. If the children has no data title then it tries to get the parent data title.
+
+# Module OfflineStorage
+
+This module allows the Angular application to run HTTP request in offline mode.
+The offline mode is detected via the NetworkInterceptor.
+
+In the `app.module.ts` declare the module with the forRoot method:
+
+```ts
+ imports: [
+    BrowserModule,
+    AppRoutingModule,
+    // ...
+    OfflineStorageModule.forRoot({ /* config */ }),
+  ],
+```
+
+## Interceptors
+
+### NetworkInterceptor
+
+The `NetworkInterceptor` is already added to the interceptors when the module is declared.
+
+## Services
+
+### CacheService
+
+Part of the OfflineStorage module.
+
+The CacheService gives some primitives that allows a persistant cache to be used to manage _progressive web request_.
+In this library we call **Progressive web request** an HTTP request that has the following properties:
+
+- GET method:
+  - online: the request is done with the back-end, then the response is stored in the front-end cache.
+  - offline: the response is extracted from the front-end cache.
+- POST/PUT/PATCH/DELETE methods:
+  - online: the request is done on the back-end, and normally the user does not need the response.
+  - offline: the request cannot be done on the back-end, so the request is stored in the front-end cache. The stored request is called an _offline order_. The offline order will be executed as soons as the front-end will be able to reach the back-end (online mode). The request is also functionnaly executed, but with the front-end cache.
+
+The cache service gives the way to load image that are stored in the cache into an image HTML element `<img>`. The method is `cacheService.loadImage(img: HTMLImageElement, url: string)`.
+
+### NetworkService
+
+The network service exposes an observable that reflects the network status (online, or offline) in real time.
 
 # Authors
 
