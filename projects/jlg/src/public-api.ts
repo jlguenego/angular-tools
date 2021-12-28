@@ -3,6 +3,7 @@
  */
 
 export * from './lib/angular-tools/angular-tools.module';
+export * from './lib/guards/authentication.guard';
 export * from './lib/interceptors/credentials.interceptor';
 export * from './lib/interceptors/timeout.interceptor';
 export * from './lib/interfaces/idable';
