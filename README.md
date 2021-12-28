@@ -316,9 +316,25 @@ The authorization service gives access to the authorization config for a given c
 
 - `getAuthConfig()`: get the user authorization config from the back-end.
 - `canGoToPath(path: string): Observable<boolean>`: indicates if the connected user can go the specified route path.
-- `can(privilege: string): Observable<boolean>`: indicates if the connected user has the given privilege.
+- `can(privilege: string): Observable<boolean>`: indicates if the connected user has the given _privilege_.
+
+A **privilege** is just a string, that the developer can configure on the
+back-end side, in the authorization config object in order to specify what the
+user can do or cannot do with the front-end. The developer can disable/enable
+button, hide/show text, etc. according a privilege.
 
 ### OAuth2
+
+The OAuth2 service allows to connect a user with the OAUTH2 protocol and a given
+identity provider (like Github, Google, Facebook, Twitter, Microsoft Azure AD,
+etc.)
+
+It just gives what the front-end needs: the url config for the "Connect with ..." button/link.
+The rest is done by the back-end. The method is the following:
+
+- `getAuthorizeUrl(provider: string): string`: for a given provider (GITHUB, etc.), return the url that the connect button needs.
+- `config$` is a BehaviorSubject that show the full configuration for all
+  providers. If you need the provider list, look at this object.
 
 # Module OfflineStorage
 

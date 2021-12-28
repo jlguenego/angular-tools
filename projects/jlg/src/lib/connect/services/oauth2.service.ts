@@ -16,7 +16,7 @@ export interface Oauth2Config {
   providedIn: 'root',
 })
 export class Oauth2Service {
-  config$ = new BehaviorSubject<Oauth2Config | undefined>(
+  public config$ = new BehaviorSubject<Oauth2Config | undefined>(
     this.getOfflineConfig()
   );
 
@@ -56,7 +56,7 @@ export class Oauth2Service {
     return result;
   }
 
-  getOfflineConfig(): Oauth2Config | undefined {
+  private getOfflineConfig(): Oauth2Config | undefined {
     try {
       const str = localStorage.getItem('oauth2Config');
       if (!str) {
@@ -69,7 +69,7 @@ export class Oauth2Service {
     }
   }
 
-  syncOfflineConfig() {
+  private syncOfflineConfig() {
     this.config$.subscribe((config) => {
       localStorage.setItem('oauth2Config', JSON.stringify(config));
     });
