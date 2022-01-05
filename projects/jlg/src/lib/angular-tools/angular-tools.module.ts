@@ -7,7 +7,7 @@ import {
 import { CommonModule } from '@angular/common';
 
 export class AngularToolsConfigService {
-  timeoutDelay = 5000;
+  timeoutDelay = 30000;
   timeoutMsg = `Sorry, timeout. The server did not respond before ${this.timeoutDelay}ms.`;
 }
 
