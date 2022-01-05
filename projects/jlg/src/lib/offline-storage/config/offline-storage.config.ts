@@ -1,3 +1,3 @@
 export class OfflineStorageConfig {
-  progressiveUrl = ['/api/.*', '!/api/auth/.*'];
+  progressiveUrl = ['/api/**', '!/api/auth/**'];
 }
