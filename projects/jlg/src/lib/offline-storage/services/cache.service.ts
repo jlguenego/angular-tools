@@ -161,6 +161,7 @@ export class CacheService {
       try {
         await this.runOrder(order);
       } catch (err) {
+        alert('order failed');
         console.error('runOrder failed. err: ', err);
       }
     }
