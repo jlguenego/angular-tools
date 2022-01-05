@@ -6,10 +6,10 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as localforage from 'localforage';
+import { isMatch } from 'matcher';
 import { lastValueFrom } from 'rxjs';
 import { Idable } from '../../interfaces/idable';
 import { HttpMethod, OfflineOrder } from '../../interfaces/offline-order';
-import { blackAndWhiteFilter } from '../../misc/black-and-white-filter';
 import {
   addOrder,
   getDefaultItem,
@@ -81,7 +81,7 @@ export class CacheService {
   }
 
   isProgressiveUrl(url: string) {
-    return blackAndWhiteFilter(url, this.config.progressiveUrl);
+    return isMatch(url, this.config.progressiveUrl);
   }
 
   async loadImage(img: HTMLImageElement, url: string) {

@@ -1,12 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { isMatch } from 'matcher';
 import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthorizationConfig } from '../../interfaces/authorization-config';
-import {
-  blackAndWhiteFilter,
-  doNotAllowAnythingConfig,
-} from '../../misc/black-and-white-filter';
+import { doNotAllowAnythingConfig } from '../../misc/black-and-white-filter';
 import { AuthenticationService } from './authentication.service';
 
 const doNotAllowAnythingAuthConfig: AuthorizationConfig = {
@@ -48,7 +46,7 @@ export class AuthorizationService {
   can(privilege: string): Observable<boolean> {
     return this.getAuthConfig().pipe(
       map((authzConfig) => {
-        return blackAndWhiteFilter(privilege, authzConfig.privilege);
+        return isMatch(privilege, authzConfig.privilege);
       })
     );
   }
@@ -57,7 +55,7 @@ export class AuthorizationService {
     return this.getAuthConfig().pipe(
       map((authzConfig) => {
         console.log('authzConfig: ', authzConfig);
-        return blackAndWhiteFilter(path, authzConfig.path);
+        return isMatch(path, authzConfig.path);
       })
     );
   }

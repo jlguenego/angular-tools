@@ -26,7 +26,7 @@ export class AuthenticationGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    console.log('guard start for state.url', state.url);
+    console.log('xx guard start for state.url', state.url);
     if (this.authenticationService.user$.value) {
       return true;
     }
