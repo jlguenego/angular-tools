@@ -81,7 +81,11 @@ export class CacheService {
   }
 
   isProgressiveUrl(url: string) {
-    return isMatch(url, this.config.progressiveUrl);
+    console.log('url: ', url);
+    console.log('this.config.progressiveUrl: ', this.config.progressiveUrl);
+    const result = isMatch(url, this.config.progressiveUrl);
+    console.log('result: ', result);
+    return result;
   }
 
   async loadImage(img: HTMLImageElement, url: string) {
