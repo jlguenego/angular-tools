@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import imageCompression from 'browser-image-compression';
 import { lastValueFrom } from 'rxjs';
 
 export interface FileServiceOptions {
@@ -27,6 +26,9 @@ export class FileService {
     if (options.compress) {
       // compress before sending
       console.log('about to compress');
+      const imageCompression = await import('browser-image-compression').then(
+        (m) => m.default
+      );
       try {
         const file = await imageCompression(image, options.compress);
         compressedImage = new File([file], image.name, {
