@@ -5,7 +5,8 @@
     "@angular/common": "^13.0.0",
     "@angular/core": "^13.0.0",
     "localforage": "^1.10.0",
-    "matcher": "^5.0.0"
+    "matcher": "^5.0.0",
+    "browser-image-compression": "^1.0.17"
   },
   "dependencies": {
     "tslib": "^2.3.0"
