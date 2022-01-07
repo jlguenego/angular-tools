@@ -5,12 +5,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-
-const isSmartphone = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-};
+import { isSmartphone } from '../misc/smartphone';
 
 @Directive({
   selector: '[jlgAutofocus]',
