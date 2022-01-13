@@ -23,14 +23,14 @@ export class DuplicateAsyncValidator {
         return of(null);
       }
       return timer(1000).pipe(
-        tap(() => {
-          console.log(
-            'debounce fini. je lance vraiment la requete de test duplicate'
-          );
-        }),
-        switchMap(() => this.http.get<unknown[]>(makeUrl(control.value))),
+        switchMap(() =>
+          this.http.get<unknown[]>(makeUrl(control.value), {
+            headers: {
+              'Cache-Control': 'no-store',
+            },
+          })
+        ),
         map((resources) => {
-          console.log('resources: ', resources);
           if (resources.length > 0) {
             return { duplicate: { value: control.value } };
           }

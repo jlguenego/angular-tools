@@ -65,5 +65,10 @@ export class NetworkInterceptor implements HttpInterceptor {
 
 const isMethodGet = (request: HttpRequest<unknown>) => request.method === 'GET';
 
-const isCachableRequest = (request: HttpRequest<unknown>) =>
-  request.url.match(/\?/) === null;
+const isCachableRequest = (request: HttpRequest<unknown>) => {
+  const cacheControl = request.headers.get('Cache-Control');
+  if (cacheControl === 'no-store') {
+    return false;
+  }
+  return true;
+};
