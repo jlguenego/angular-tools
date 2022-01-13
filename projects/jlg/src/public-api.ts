@@ -24,6 +24,7 @@ export * from './lib/services/color-scheme.service';
 export * from './lib/services/crud.service';
 export * from './lib/services/file.service';
 export * from './lib/services/title.service';
+export * from './lib/services/filter.service';
 export * from './lib/validators/duplicate.async-validator';
 export * from './lib/validators/JlgValidators';
 export * from './lib/misc/digest';
