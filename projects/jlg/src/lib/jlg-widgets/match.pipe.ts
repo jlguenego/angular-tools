@@ -1,3 +1,4 @@
+import { removeDiacritics } from './../misc/diacritics';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -5,16 +6,17 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class MatchPipe implements PipeTransform {
   transform(value: string, match: string): string {
-    const lmatch = match.toLowerCase();
-    const lvalue = value.toLowerCase();
+    const lmatch = removeDiacritics(match.toLowerCase());
+    const lvalue = removeDiacritics(value.toLowerCase());
     let result = '';
     let i = 0;
-    for (const c of lvalue) {
+    for (let j = 0; j < lvalue.length; j++) {
+      const c = lvalue[j];
       if (i < lmatch.length && c === lmatch[i]) {
-        result += `<b>${c}</b>`;
+        result += `<b>${value[j]}</b>`;
         i++;
       } else {
-        result += c;
+        result += value[j];
       }
     }
     return `<span class="match">${result}</span>`;

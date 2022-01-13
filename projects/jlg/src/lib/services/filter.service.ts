@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { removeDiacritics } from '../misc/diacritics';
 
 const matchValue = (value: string, match: string) => {
   const lmatch = match.toLowerCase();
@@ -20,7 +21,7 @@ export class FilterService {
   constructor() {}
 
   match(pattern: string, document: object) {
-    const p = pattern.toLowerCase();
+    const p = removeDiacritics(pattern.toLowerCase());
     for (const [key, value] of Object.entries(document)) {
       if (key === 'id') {
         continue;
@@ -28,7 +29,7 @@ export class FilterService {
       if (typeof value !== 'string') {
         continue;
       }
-      if (matchValue(value.toLowerCase(), p)) {
+      if (matchValue(removeDiacritics(value.toLowerCase()), p)) {
         return true;
       }
     }
