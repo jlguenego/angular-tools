@@ -2,17 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 
-export interface FileServiceOptions {
-  compress?: {
-    maxSizeMB?: number;
-    maxWidthOrHeight?: number;
-    useWebWorker?: boolean;
-    maxIteration?: number;
-    exifOrientation?: number;
-    onProgress?: (progress: number) => void;
-    fileType?: string;
-    initialQuality?: number;
-  };
+export interface CompressOptions {
+  maxSizeMB?: number;
+  maxWidthOrHeight?: number;
+  useWebWorker?: boolean;
+  maxIteration?: number;
+  exifOrientation?: number;
+  onProgress?: (progress: number) => void;
+  fileType?: string;
+  initialQuality?: number;
 }
 
 @Injectable({
@@ -21,28 +19,33 @@ export interface FileServiceOptions {
 export class FileService {
   constructor(private http: HttpClient) {}
 
-  async add(image: File, options: FileServiceOptions = {}): Promise<void> {
-    let compressedImage = image;
-    if (options.compress) {
-      // compress before sending
-      console.log('about to compress');
-      const imageCompression = await import('browser-image-compression').then(
-        (m) => m.default
-      );
-      try {
-        const file = await imageCompression(image, options.compress);
-        compressedImage = new File([file], image.name, {
+  async compress(image: File, options: CompressOptions = {}) {
+    console.log('about to compress');
+    const imageCompression = await import('browser-image-compression').then(
+      (m) => m.default
+    );
+    try {
+      const compressedFile = await imageCompression(image, options);
+      // keep the original file name
+      const compressedFileWithOriginalName = new File(
+        [compressedFile],
+        image.name,
+        {
           type: image.type,
           lastModified: image.lastModified,
-        });
-        console.log('compressedImage: ', compressedImage);
-      } catch (err) {
-        console.log('err: ', err);
-        throw err;
-      }
+        }
+      );
+      console.log('compressedImage: ', compressedFileWithOriginalName);
+      return compressedFileWithOriginalName;
+    } catch (err) {
+      console.log('err: ', err);
+      throw err;
     }
+  }
+
+  async add(image: File): Promise<void> {
     const formData = new FormData();
-    formData.append('file', compressedImage);
+    formData.append('file', image);
     await lastValueFrom(this.http.post<void>('/api/upload', formData));
   }
 
