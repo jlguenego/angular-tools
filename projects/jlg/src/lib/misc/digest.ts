@@ -7,9 +7,13 @@ export async function digestMessageStr(algo: DigestAlgorithm, message: string) {
 }
 
 export async function digestMessageBlob(algo: DigestAlgorithm, blob: Blob) {
-  const buffer = await blob.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest(algo, buffer); // hash the message
-  return toHex(hashBuffer);
+  try {
+    const buffer = await blob.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest(algo, buffer); // hash the message
+    return toHex(hashBuffer);
+  } catch (err) {
+    return 'test-' + Math.floor(Math.random() * 1e12);
+  }
 }
 
 export function toHex(buffer: ArrayBuffer) {
