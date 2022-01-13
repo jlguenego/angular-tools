@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { AutofocusDirective } from './autofocus.directive';
+import { MatchPipe } from './match.pipe';
 
 @NgModule({
-  declarations: [AutofocusDirective],
+  declarations: [AutofocusDirective, MatchPipe],
   imports: [CommonModule],
-  exports: [AutofocusDirective],
+  exports: [AutofocusDirective, MatchPipe],
 })
 export class JlgWidgetsModule {}
