@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
 
+const matchValue = (value: string, match: string) => {
+  const lmatch = match.toLowerCase();
+  const lvalue = value.toLowerCase();
+  let result = '';
+  let i = 0;
+  for (const c of lvalue) {
+    if (i < lmatch.length && c === lmatch[i]) {
+      i++;
+    }
+  }
+  return i === match.length;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +28,7 @@ export class FilterService {
       if (typeof value !== 'string') {
         continue;
       }
-      if (value.match(new RegExp(p, 'i'))) {
+      if (matchValue(value.toLowerCase(), p)) {
         return true;
       }
     }
