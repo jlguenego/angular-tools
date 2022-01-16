@@ -21,27 +21,10 @@ import { Idable } from '../interfaces/idable';
   providedIn: 'root',
 })
 export abstract class CrudService<T extends Idable> {
+  documents$ = new BehaviorSubject<T[]>([]);
   url = this.getEndpoint();
 
-  documents$ = new BehaviorSubject<T[]>([]);
-
   constructor(private http: HttpClient, private router: Router) {}
-
-  abstract getEndpoint(): string;
-
-  httpError(err: unknown) {
-    console.log('err: ', err);
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 403) {
-        this.router.navigateByUrl('/403');
-        return;
-      }
-      if (err.status === 400) {
-        alert('bad request...' + err.error);
-        return;
-      }
-    }
-  }
 
   add(document: T): Observable<void> {
     return timer(300).pipe(
@@ -58,6 +41,20 @@ export abstract class CrudService<T extends Idable> {
         )
       )
     );
+  }
+
+  httpError(err: unknown) {
+    console.log('err: ', err);
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 403) {
+        this.router.navigateByUrl('/403');
+        return;
+      }
+      if (err.status === 400) {
+        alert('bad request...' + err.error);
+        return;
+      }
+    }
   }
 
   remove(ids: string[]): Observable<void> {
@@ -91,4 +88,12 @@ export abstract class CrudService<T extends Idable> {
       })
     );
   }
+
+  retrieveOne(id: string): Observable<T> {
+    return timer(300).pipe(
+      switchMap(() => this.http.get<T>(`${this.url}/${id}`).pipe(timeout(5000)))
+    );
+  }
+
+  abstract getEndpoint(): string;
 }
