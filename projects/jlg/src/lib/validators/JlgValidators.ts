@@ -1,10 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  ValidationErrors,
-} from '@angular/forms';
-import { map, Observable, of, switchMap, tap, timer } from 'rxjs';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export class JlgValidators {
   static integer(control: AbstractControl): ValidationErrors | null {
