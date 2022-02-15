@@ -37,6 +37,18 @@
   --transparent-8: hsla(0, 0%, 0%, 0.8);
   --transparent-9: hsla(0, 0%, 0%, 0.9);
   --transparent-10: hsla(0, 0%, 0%, 1);
+
+  --luminosity-0: 0%;
+  --luminosity-1: 10%;
+  --luminosity-2: 20%;
+  --luminosity-3: 30%;
+  --luminosity-4: 40%;
+  --luminosity-5: 50%;
+  --luminosity-6: 60%;
+  --luminosity-7: 70%;
+  --luminosity-8: 80%;
+  --luminosity-9: 90%;
+  --luminosity-10: 100%;
 }
 
 .dark {
@@ -75,4 +87,16 @@
   --transparent-8: hsla(0, 0%, 100%, 0.8);
   --transparent-9: hsla(0, 0%, 100%, 0.9);
   --transparent-10: hsla(0, 0%, 100%, 1);
+
+  --luminosity-0: 100%;
+  --luminosity-1: 90%;
+  --luminosity-2: 80%;
+  --luminosity-3: 70%;
+  --luminosity-4: 60%;
+  --luminosity-5: 50%;
+  --luminosity-6: 40%;
+  --luminosity-7: 30%;
+  --luminosity-8: 20%;
+  --luminosity-9: 10%;
+  --luminosity-10: 0%;
 }
