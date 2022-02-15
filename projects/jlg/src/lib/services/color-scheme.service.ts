@@ -10,12 +10,17 @@ interface ColorSchemeConfig {
 
 const COLOR_SHEME = 'color-scheme';
 
+const primaryHue = window
+  .getComputedStyle(document.body)
+  .getPropertyValue('--primary-hue');
+const defaultHue = +primaryHue || 120;
+
 @Injectable({
   providedIn: 'root',
 })
 export class ColorSchemeService {
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
-  hue$ = new BehaviorSubject<number>(120);
+  hue$ = new BehaviorSubject<number>(defaultHue);
 
   constructor() {
     const browserPref = this.getBrowserPreferences();
