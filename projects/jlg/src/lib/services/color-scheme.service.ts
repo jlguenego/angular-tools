@@ -13,7 +13,7 @@ const COLOR_SHEME = 'color-scheme';
 const primaryHue = window
   .getComputedStyle(document.body)
   .getPropertyValue('--primary-hue');
-const defaultHue = +primaryHue || 120;
+const defaultHue = primaryHue === undefined ? 120 : +primaryHue;
 
 @Injectable({
   providedIn: 'root',

@@ -1,6 +1,6 @@
 {
   "name": "@jlguenego/angular-tools",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "peerDependencies": {
     "@angular/common": "^13.1.0",
     "@angular/core": "^13.1.0",
