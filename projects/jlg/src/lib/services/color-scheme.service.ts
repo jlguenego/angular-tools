@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinct } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, tap } from 'rxjs';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -39,10 +39,18 @@ export class ColorSchemeService {
   constructor() {
     this.initUserPreferences();
     this.syncWithUserPreferences();
-    this.browserColorScheme$.pipe(distinct()).subscribe((newColorScheme) => {
-      this.colorScheme$.next(newColorScheme);
-      this.setFavicon(newColorScheme);
-    });
+    this.browserColorScheme$
+      .pipe(
+        tap((c) => {
+          console.log('c: ', c);
+        }),
+        distinctUntilChanged()
+      )
+      .subscribe((newColorScheme) => {
+        console.log('new browser color scheme', newColorScheme);
+        this.colorScheme$.next(newColorScheme);
+        this.setFavicon(newColorScheme);
+      });
     this.colorScheme$.subscribe((newColorScheme) => {
       ['dark', 'light'].forEach((colorScheme) => {
         document.body.classList.remove(colorScheme);
@@ -85,7 +93,9 @@ export class ColorSchemeService {
     window
       .matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (e) => {
+        console.log('new change');
         const colorScheme = e.matches ? 'dark' : 'light';
+        console.log('colorScheme: ', colorScheme);
         this.browserColorScheme$.next(colorScheme);
       });
   }
