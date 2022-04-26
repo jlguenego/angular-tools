@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, distinct } from 'rxjs';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -15,19 +15,35 @@ const primaryHue = window
   .getPropertyValue('--primary-hue');
 const defaultHue = primaryHue === undefined ? 120 : +primaryHue;
 
+const getBrowserPreferences = (): ColorScheme => {
+  if (!window.matchMedia) {
+    return 'light';
+  }
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  } else {
+    return 'light';
+  }
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class ColorSchemeService {
+  private browserColorScheme$ = new BehaviorSubject<ColorScheme>(
+    getBrowserPreferences()
+  );
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
   hue$ = new BehaviorSubject<number>(defaultHue);
 
   constructor() {
-    const browserPref = this.getBrowserPreferences();
-    this.setFavicon(browserPref);
-
+    console.log('TEMP-----------------');
     this.initUserPreferences();
     this.syncWithUserPreferences();
+    this.browserColorScheme$.pipe(distinct()).subscribe((newColorScheme) => {
+      this.colorScheme$.next(newColorScheme);
+      this.setFavicon(newColorScheme);
+    });
     this.colorScheme$.subscribe((newColorScheme) => {
       ['dark', 'light'].forEach((colorScheme) => {
         document.body.classList.remove(colorScheme);
@@ -71,8 +87,7 @@ export class ColorSchemeService {
       .matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (e) => {
         const colorScheme = e.matches ? 'dark' : 'light';
-        this.colorScheme$.next(colorScheme);
-        this.setFavicon(colorScheme);
+        this.browserColorScheme$.next(colorScheme);
       });
   }
 
@@ -86,27 +101,16 @@ export class ColorSchemeService {
       if (!['dark', 'light'].includes(colorSchemeConfig.colorScheme)) {
         throw new Error();
       }
+      this.colorScheme$.next(colorSchemeConfig.colorScheme);
+
       if (isNaN(+colorSchemeConfig.hue)) {
         throw new Error();
       }
-      this.colorScheme$.next(colorSchemeConfig.colorScheme);
       this.hue$.next(colorSchemeConfig.hue);
     } catch (err) {
       localStorage.removeItem(COLOR_SHEME);
-      const browserPref = this.getBrowserPreferences();
-      this.colorScheme$.next(browserPref);
+      this.colorScheme$.next(this.browserColorScheme$.value);
       return;
-    }
-  }
-
-  private getBrowserPreferences(): ColorScheme {
-    if (!window.matchMedia) {
-      return 'light';
-    }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    } else {
-      return 'light';
     }
   }
 
