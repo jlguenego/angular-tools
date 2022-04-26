@@ -37,7 +37,6 @@ export class ColorSchemeService {
   hue$ = new BehaviorSubject<number>(defaultHue);
 
   constructor() {
-    console.log('TEMP-----------------');
     this.initUserPreferences();
     this.syncWithUserPreferences();
     this.browserColorScheme$.pipe(distinct()).subscribe((newColorScheme) => {
