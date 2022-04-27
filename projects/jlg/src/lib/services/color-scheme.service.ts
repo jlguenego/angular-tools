@@ -33,12 +33,16 @@ export class ColorSchemeService {
   private browserColorScheme$ = new BehaviorSubject<ColorScheme>(
     getBrowserPreferences()
   );
+
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
   hue$ = new BehaviorSubject<number>(defaultHue);
+  isDoingPrint = false;
 
   constructor() {
     this.initUserPreferences();
     this.syncWithUserPreferences();
+    this.checkWhenPrinting();
+
     this.browserColorScheme$
       .pipe(distinctUntilChanged())
       .subscribe((newColorScheme) => {
@@ -67,6 +71,27 @@ export class ColorSchemeService {
     });
   }
 
+  checkWhenPrinting() {
+    window.onbeforeprint = () => {
+      this.isDoingPrint = true;
+    };
+    window.onafterprint = () => {
+      this.isDoingPrint = false;
+    };
+  }
+
+  setFavicon(newColorScheme: ColorScheme) {
+    let link: HTMLLinkElement | null =
+      document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/svg';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = `assets/favicon-${newColorScheme}.svg`;
+  }
+
   toggleColorScheme() {
     if (this.colorScheme$.value === 'light') {
       this.colorScheme$.next('dark');
@@ -77,19 +102,6 @@ export class ColorSchemeService {
 
   updateHue(newHue: number) {
     this.hue$.next(newHue);
-  }
-
-  private syncWithUserPreferences() {
-    // also watch for user pref changes.
-    if (!window.matchMedia) {
-      return;
-    }
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (e) => {
-        const colorScheme = e.matches ? 'dark' : 'light';
-        this.browserColorScheme$.next(colorScheme);
-      });
   }
 
   private initUserPreferences() {
@@ -115,15 +127,19 @@ export class ColorSchemeService {
     }
   }
 
-  setFavicon(newColorScheme: ColorScheme) {
-    let link: HTMLLinkElement | null =
-      document.querySelector("link[rel~='icon']");
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      link.type = 'image/svg';
-      document.getElementsByTagName('head')[0].appendChild(link);
+  private syncWithUserPreferences() {
+    // also watch for user pref changes.
+    if (!window.matchMedia) {
+      return;
     }
-    link.href = `assets/favicon-${newColorScheme}.svg`;
+    window
+      .matchMedia('screen and (prefers-color-scheme: dark)')
+      .addEventListener('change', (e) => {
+        if (this.isDoingPrint) {
+          return;
+        }
+        const colorScheme = e.matches ? 'dark' : 'light';
+        this.browserColorScheme$.next(colorScheme);
+      });
   }
 }
