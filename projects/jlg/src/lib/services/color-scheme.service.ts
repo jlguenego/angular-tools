@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Subject } from 'rxjs';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -30,9 +30,7 @@ const getBrowserPreferences = (): ColorScheme => {
   providedIn: 'root',
 })
 export class ColorSchemeService {
-  private browserColorScheme$ = new BehaviorSubject<ColorScheme>(
-    getBrowserPreferences()
-  );
+  private browserColorScheme$ = new Subject<ColorScheme>();
 
   colorScheme$ = new BehaviorSubject<ColorScheme>('light');
   hue$ = new BehaviorSubject<number>(defaultHue);
@@ -122,7 +120,7 @@ export class ColorSchemeService {
       this.hue$.next(colorSchemeConfig.hue);
     } catch (err) {
       localStorage.removeItem(COLOR_SHEME);
-      this.colorScheme$.next(this.browserColorScheme$.value);
+      this.colorScheme$.next(getBrowserPreferences());
       return;
     }
   }
